@@ -3,11 +3,26 @@
 version: '3'
 
 vars:
-  GREETING: Hello, world!
+  APP_NAME: garminbowling
+  DEVICE: fr970
+  GARMIN_SDK: 
+    sh: cat ~/.Garmin/ConnectIQ/current-sdk.cfg
+  JAVA_OPTIONS: -Xms1g -Dfile.encoding=UTF-8 -Dapple.awt.UIElement=true
+  PRIVATE_KEY: /home/ngeunit1/.keys/garmin/developer_key
+  BUILD_CMD: java {{.JAVA_OPTIONS}} -jar "{{.GARMIN_SDK}}bin/monkeybrains.jar" 
+            -o bin/{{.APP_NAME}}.prg -f monkey.jungle -y {{.PRIVATE_KEY}} 
+            -d {{.DEVICE}}_sim -w
 
 tasks:
-  default:
-    desc: Print a greeting message
+  build:
+    cmds: 
+      - "{{.BUILD_CMD}}"
+  test:
     cmds:
-      - echo "{{.GREETING}}"
-    silent: true
+     - "{{.BUILD_CMD}} -t"
+     - "{{.GARMIN_SDK}}/bin/connectiq &"
+     - sleep 3
+     - "./runtests.sh '{{.GARMIN_SDK}}/bin/monkeydo bin/{{.APP_NAME}}.prg {{.DEVICE}} -t'"
+
+
+
