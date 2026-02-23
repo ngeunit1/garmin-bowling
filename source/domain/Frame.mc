@@ -1,5 +1,12 @@
 import Toybox.Lang;
 
+typedef Frame as interface {
+    function addShot(wood as Number) as Void;
+    function GetBowledWood() as Number;
+    function GetNumberBonusShots() as Number;
+    var Bowled as Boolean;
+};
+
 class InvalidFrameException extends Lang.Exception {
     function initialize(errorMessage as String) {
         Exception.initialize();
@@ -11,13 +18,11 @@ class InvalidFrameException extends Lang.Exception {
     private var _errorMessage as String;
 }
 
-class Frame {
-    function initialize(game as Game) {
-        _game = game;
-        _gameType = game.GameType;
+class NormalFrame {
+    function initialize(shotsPerFrame as Number) {
+        _shotsPerFrame = shotsPerFrame;
         Bowled = false;
-        ScoreReady = false;
-        _wood = new[ShotsPerFrame[_gameType]] as Array<Number?>;
+        _wood = new[_shotsPerFrame] as Array<Number?>;
         _currentShot = 0;
     }
 
@@ -27,21 +32,18 @@ class Frame {
         }
         _wood[_currentShot] = wood;
         _totalBowledWood = _getTotalBowledWood();
-        if (_currentShot == ShotsPerFrame[_gameType] - 1 || _totalBowledWood == 10) {
+        if (_totalBowledWood == 10) {
             Bowled = true;
-            if (_totalBowledWood == 10) {
-                if (_currentShot == 0) {
-                    _bonusShots = 2;
-                } else if (_currentShot == 1) {
-                    _bonusShots = 1;
-                } else {
-                    _bonusShots = 0;
-                    ScoreReady = true;
-                }
+            if (_currentShot == 0) {
+                _bonusShots = 2;
+            } else if (_currentShot == 1) {
+                _bonusShots = 1;
             } else {
                 _bonusShots = 0;
-                ScoreReady = true;
             }
+        } else if (_currentShot == _shotsPerFrame - 1 ) {
+            Bowled = true;
+            _bonusShots = 0;
         } else {
             _currentShot += 1;
         }
@@ -55,16 +57,70 @@ class Frame {
         return totalWood;
     }
 
+    function GetBowledWood() as Number {
+        if (!Bowled) {
+            throw new InvalidFrameException("Called GetBowledWood from non-bowled frame");
+        }
+        return _getTotalBowledWood();
+    }
+
+    function GetNumberBonusShots() as Number {
+        if (!Bowled) {
+            throw new InvalidFrameException("Called GetNumberBonusShots from non-bowled frame");
+        }
+        return _bonusShots as Number;
+    }
+
     var Bowled as Boolean;
-    var ScoreReady as Boolean;
-    var _bonusShots as Number?;
-    var _bonusWood as Number?;
-    var _currentShot as Number;
-    var _cumulativeWood as Number?;
-    var _display as String?;
-    var _game as Game;
-    var _gameType as GameTypes;
-    var _totalBowledWood as Number?;
-    var _totalWood as Number?;
-    var _wood as Array<Number?>;
+    private var _bonusShots as Number?;
+    private var _currentShot as Number;
+    private var _shotsPerFrame as Number;
+    private var _totalBowledWood as Number?;
+    private var _wood as Array<Number?>;
+}
+
+class TenthFrame {
+    function initialize() {
+        Bowled = false;
+        _wood = new[3] as Array<Number?>;
+        _currentShot = 0;
+    }
+
+    function addShot(wood as Number) as Void {
+        if (Bowled) {
+            throw new InvalidFrameException("Attempted to add shot to completed frame");
+        }
+        _wood[_currentShot] = wood;
+        _totalBowledWood = _getTotalBowledWood();
+        if (_totalBowledWood < 10 && _currentShot == 1) {
+            Bowled = true;
+        } else if (_currentShot == 2) {
+            Bowled = true;
+        } else {
+            _currentShot += 1;
+        }
+    }
+
+    private function _getTotalBowledWood() as Number {
+        var totalWood = 0;
+        for (var i = 0; i <= _currentShot; i++) {
+            totalWood += _wood[i] as Number;
+        }
+        return totalWood;
+    }
+
+    function GetBowledWood() as Number {
+        if (!Bowled) {
+            throw new InvalidFrameException("Called GetBowledWood from non-bowled frame");
+        }
+        return _getTotalBowledWood();
+    }
+    function GetNumberBonusShots() as Number {
+        return 0;
+    }
+
+    var Bowled as Boolean;
+    private var _currentShot as Number;
+    private var _totalBowledWood as Number?;
+    private var _wood as Array<Number?>;
 }
