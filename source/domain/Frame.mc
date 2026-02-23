@@ -80,8 +80,9 @@ class NormalFrame {
 }
 
 class TenthFrame {
-    function initialize() {
+    function initialize(shotsPerFrame as Number) {
         Bowled = false;
+        _shotsPerFrame = shotsPerFrame;
         _wood = new[3] as Array<Number?>;
         _currentShot = 0;
     }
@@ -92,7 +93,7 @@ class TenthFrame {
         }
         _wood[_currentShot] = wood;
         _totalBowledWood = _getTotalBowledWood();
-        if (_totalBowledWood < 10 && _currentShot == 1) {
+        if (_totalBowledWood < 10 && _currentShot == _shotsPerFrame-1) {
             Bowled = true;
         } else if (_currentShot == 2) {
             Bowled = true;
@@ -116,11 +117,15 @@ class TenthFrame {
         return _getTotalBowledWood();
     }
     function GetNumberBonusShots() as Number {
+        if (!Bowled) {
+            throw new InvalidFrameException("Called GetNumberBonusShots from non-bowled frame");
+        }
         return 0;
     }
 
     var Bowled as Boolean;
     private var _currentShot as Number;
+    private var _shotsPerFrame as Number;
     private var _totalBowledWood as Number?;
     private var _wood as Array<Number?>;
 }

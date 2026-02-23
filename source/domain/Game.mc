@@ -90,7 +90,7 @@ class Game {
                 _bonusShotsLeft[FrameNumber] = currentFrame.GetNumberBonusShots();
             }
             FrameNumber += 1;
-            _frames[FrameNumber ] = new TenthFrame();
+            _frames[FrameNumber] = new TenthFrame(ShotsPerFrame(GameType));
             return NEXTFRAME;
         } else if (currentFrame.Bowled && FrameNumber == 9) {
             _bonusWood[FrameNumber] = 0;
