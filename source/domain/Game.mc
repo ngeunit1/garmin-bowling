@@ -48,7 +48,7 @@ class Game {
         GameDone = false;
     }
 
-    function startGame() as Void {
+    function StartGame() as Void {
         _frames[0] = new NormalFrame(ShotsPerFrame(GameType));
     }
 
@@ -60,7 +60,7 @@ class Game {
         _shotList[idx] = wood;
     }
 
-    function addShot(wood as Number) as Void {
+    function AddShot(wood as Number) as FrameStatus {
         appendShot(wood);
         (_frames[FrameNumber] as Frame).addShot(wood);
         var frameNumbers = _bonusShotsLeft.keys();
@@ -72,9 +72,10 @@ class Game {
             }
             _bonusWood[frameNumber] = (_bonusWood[frameNumber] as Number) + wood;
         }
+        return checkFrameStatus();
     }
 
-    function checkFrameStatus() as FrameStatus {
+    private function checkFrameStatus() as FrameStatus {
         var currentFrame = (_frames[FrameNumber] as Frame);
         if (currentFrame.Bowled && FrameNumber < 8) {
             _bonusWood[FrameNumber] = 0;
