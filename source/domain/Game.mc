@@ -103,7 +103,7 @@ class Game {
 
     public var GameType as GameTypes;
     public var GameDone as Boolean;
-    private var FrameNumber as Number;
+    public var FrameNumber as Number;
     private var _bonusShotsLeft as Dictionary<Number, Number>;
     private var _bonusWood as Dictionary<Number, Number>;
     private var _frames as Array<Frame?>;
