@@ -100,3 +100,11 @@ function gameTenthFrameTwoShotsLessThan10GameDone(logger as Logger) as Boolean {
     Test.assertEqual(theGame.GameDone, true);
     return true;
 }
+
+(:test)
+function initialGetFrameStats(logger as Logger) as Boolean {
+    var theGame = new Game(TENPIN);
+    var frameStats = theGame.GetFrameStats();
+    Test.assertEqual(frameStats.Frames.size(), 0);
+    return true;
+}

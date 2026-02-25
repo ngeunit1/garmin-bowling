@@ -102,6 +102,79 @@ class Game {
         }
     }
 
+    function GetFrameStats() as FrameStats {
+        var numFrames = 0;
+        while (_frames[numFrames] != null && (_frames[numFrames] as Frame).Bowled) {
+            numFrames++;
+        }
+        var frames = new Frame[numFrames];
+        var bonusWoods = new Number[numFrames];
+        for (var idx = 0; idx < numFrames; idx++) {
+            frames[idx] = _frames[idx] as Frame;
+            if (_bonusWood.hasKey(idx)) {
+                bonusWoods[idx] = _bonusWood[idx] as Number;
+            } else {
+                bonusWoods[idx] = 0;
+            }
+        }
+        return new FrameStats(frames, bonusWoods);
+    }
+
+    class FrameStats {
+        function initialize(frames as Array<Frame>, bonusWoods as Array<Number>) {
+            Frames = new SingleFrameStats[frames.size()];
+            for (var idx = 0; idx < frames.size(); idx ++) {
+                Frames[idx] = new SingleFrameStats(frames[idx], bonusWoods[idx]);
+            }
+        }
+
+        class SingleFrameStats {
+            function initialize(frame as Frame, bonusWood as Number) {
+                _wood = frame.GetWood();
+                RunningTotalWood = frame.GetBowledWood();
+                RunningTotalWood += bonusWood;
+                WoodDisplay = self.getWoodDisplay(_wood);
+            }
+
+            static private function getWoodDisplay(wood as Array<Number?>) as Array<Char> {
+                var woodDisplay = new Char[wood.size()];
+                var culumativeWood = 0;
+                for (var idx = 0; idx < wood.size(); idx++) {
+                    if (wood[idx] == null) {
+                        break;
+                    }
+                    var currentWood = wood[idx] as Number;
+                    culumativeWood += currentWood;
+                    if(culumativeWood == 10) {
+                        if(idx == 0) {
+                            woodDisplay[idx] = 'X';
+                            break;
+                        } else if(idx == 1) {
+                            woodDisplay[idx] = '/';
+                            break;
+                        } else {
+                            woodDisplay[idx] = currentWood.toChar();
+                            break;
+                        }
+                    }
+                    if (currentWood == 0) {
+                        woodDisplay[idx] = '-';
+                    } else {
+                        woodDisplay[idx] = currentWood.toChar();
+                    }
+                }
+                return woodDisplay;
+            } 
+
+            
+            var RunningTotalWood as Number;      
+            var WoodDisplay as Array<Char>;
+            private var _wood as Array<Number?>;
+        }
+
+        var Frames as Array<SingleFrameStats>;
+    }
+
     public var GameType as GameTypes;
     public var GameDone as Boolean;
     public var FrameNumber as Number;

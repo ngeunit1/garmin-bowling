@@ -4,6 +4,7 @@ typedef Frame as interface {
     function addShot(wood as Number) as Void;
     function GetBowledWood() as Number;
     function GetNumberBonusShots() as Number;
+    function GetWood() as Array<Number?>;
     var Bowled as Boolean;
 };
 
@@ -71,6 +72,13 @@ class NormalFrame {
         return _bonusShots as Number;
     }
 
+    function GetWood() as Array<Number?> {
+        if (!Bowled) {
+            throw new InvalidFrameException("Called GetWood from non-bowled frame");
+        }
+        return _wood;
+    }
+
     var Bowled as Boolean;
     private var _bonusShots as Number?;
     private var _currentShot as Number;
@@ -121,6 +129,13 @@ class TenthFrame {
             throw new InvalidFrameException("Called GetNumberBonusShots from non-bowled frame");
         }
         return 0;
+    }
+
+    function GetWood() as Array<Number?> {
+        if (!Bowled) {
+            throw new InvalidFrameException("Called GetWood from non-bowled frame");
+        }
+        return _wood;
     }
 
     var Bowled as Boolean;
