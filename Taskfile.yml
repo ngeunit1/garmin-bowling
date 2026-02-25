@@ -9,9 +9,6 @@ vars:
     sh: cat ~/.Garmin/ConnectIQ/current-sdk.cfg
   JAVA_OPTIONS: -Xms1g -Dfile.encoding=UTF-8 -Dapple.awt.UIElement=true
   PRIVATE_KEY: /home/$USER/.keys/garmin/developer_key
-  BUILD_CMD: java {{.JAVA_OPTIONS}} -jar "{{.GARMIN_SDK}}bin/monkeybrains.jar" 
-            -o bin/{{.PRG_NAME}}.prg -f monkey.jungle -y {{.PRIVATE_KEY}} 
-            -d {{.DEVICE}}_sim -w {{.TEST_FLAG}}
 
 tasks:
   build-cmd:
@@ -19,7 +16,7 @@ tasks:
     cmds:
       - java {{.JAVA_OPTIONS}} -jar "{{.GARMIN_SDK}}bin/monkeybrains.jar" 
             -o bin/{{.PRG_NAME}}.prg -f monkey.jungle -y {{.PRIVATE_KEY}} 
-            -d {{.DEVICE}}_sim -w
+            -d {{.DEVICE}}_sim -w {{.TEST_FLAG}}
   build:
     cmds: 
       - task: build-cmd
@@ -34,7 +31,7 @@ tasks:
           TEST_FLAG: "-t"
       - "{{.GARMIN_SDK}}/bin/connectiq &"
       - sleep 3
-      - "./runtests.sh '{{.GARMIN_SDK}}/bin/monkeydo bin/{{.APP_NAME}}.prg {{.DEVICE}} -t'"
+      - "./runtests.sh '{{.GARMIN_SDK}}/bin/monkeydo bin/{{.APP_NAME}}_test.prg {{.DEVICE}} -t'"
 
 
 

@@ -108,20 +108,20 @@ class Game {
             numFrames++;
         }
         var frames = new Frame[numFrames];
-        var bonusWoods = new Number[numFrames];
+        var bonusWoods = new Number[numFrames] as Array<Number?>;
         for (var idx = 0; idx < numFrames; idx++) {
             frames[idx] = _frames[idx] as Frame;
-            if (_bonusWood.hasKey(idx)) {
-                bonusWoods[idx] = _bonusWood[idx] as Number;
+            if (_bonusShotsLeft.hasKey(idx)) {
+                bonusWoods[idx] = null;
             } else {
-                bonusWoods[idx] = 0;
+                bonusWoods[idx] = _bonusWood[idx] as Number;
             }
         }
         return new FrameStats(frames, bonusWoods);
     }
 
     class FrameStats {
-        function initialize(frames as Array<Frame>, bonusWoods as Array<Number>) {
+        function initialize(frames as Array<Frame>, bonusWoods as Array<Number?>) {
             Frames = new SingleFrameStats[frames.size()];
             for (var idx = 0; idx < frames.size(); idx ++) {
                 Frames[idx] = new SingleFrameStats(frames[idx], bonusWoods[idx]);
@@ -129,15 +129,19 @@ class Game {
         }
 
         class SingleFrameStats {
-            function initialize(frame as Frame, bonusWood as Number) {
+            function initialize(frame as Frame, bonusWood as Number?) {
                 _wood = frame.GetWood();
                 RunningTotalWood = frame.GetBowledWood();
-                RunningTotalWood += bonusWood;
+                if (bonusWood == null) {
+                    RunningTotalWood = null; 
+                } else {
+                    RunningTotalWood += bonusWood;
+                }
                 WoodDisplay = self.getWoodDisplay(_wood);
             }
 
-            static private function getWoodDisplay(wood as Array<Number?>) as Array<Char> {
-                var woodDisplay = new Char[wood.size()];
+            static private function getWoodDisplay(wood as Array<Number?>) as Array<String> {
+                var woodDisplay = new String[wood.size()];
                 var culumativeWood = 0;
                 for (var idx = 0; idx < wood.size(); idx++) {
                     if (wood[idx] == null) {
@@ -147,28 +151,28 @@ class Game {
                     culumativeWood += currentWood;
                     if(culumativeWood == 10) {
                         if(idx == 0) {
-                            woodDisplay[idx] = 'X';
+                            woodDisplay[idx] = "X";
                             break;
                         } else if(idx == 1) {
-                            woodDisplay[idx] = '/';
+                            woodDisplay[idx] = "/";
                             break;
                         } else {
-                            woodDisplay[idx] = currentWood.toChar();
+                            woodDisplay[idx] = currentWood.toString();
                             break;
                         }
                     }
                     if (currentWood == 0) {
-                        woodDisplay[idx] = '-';
+                        woodDisplay[idx] = "-";
                     } else {
-                        woodDisplay[idx] = currentWood.toChar();
+                        woodDisplay[idx] = currentWood.toString();
                     }
                 }
                 return woodDisplay;
             } 
 
             
-            var RunningTotalWood as Number;      
-            var WoodDisplay as Array<Char>;
+            var RunningTotalWood as Number?;      
+            var WoodDisplay as Array<String>;
             private var _wood as Array<Number?>;
         }
 

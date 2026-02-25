@@ -104,7 +104,58 @@ function gameTenthFrameTwoShotsLessThan10GameDone(logger as Logger) as Boolean {
 (:test)
 function initialGetFrameStats(logger as Logger) as Boolean {
     var theGame = new Game(TENPIN);
+    theGame.StartGame();
     var frameStats = theGame.GetFrameStats();
     Test.assertEqual(frameStats.Frames.size(), 0);
+    return true;
+}
+
+function compareDisplayWoodArray(act as Array<String>, exp as Array<String>) as Boolean {
+    if (act.size() != exp.size()) {
+        return false;
+    }
+    for (var idx = 0; idx < exp.size(); idx++) {
+        if (!(act[idx] == null && exp[idx] == null) && !(act[idx].equals(exp[idx]))) {
+            return false;
+        }
+    }
+    return true;
+}
+
+(:test)
+function oneFrameGetFrameStats(logger as Logger) as Boolean {
+    var theGame = new Game(TENPIN);
+    theGame.StartGame();
+    theGame.AddShot(5);
+    theGame.AddShot(4);
+    var frameStats = theGame.GetFrameStats();
+    Test.assertEqual(frameStats.Frames.size(), 1);
+    Test.assertEqual(frameStats.Frames[0].RunningTotalWood as Number, 9);
+    Test.assert(compareDisplayWoodArray(frameStats.Frames[0].WoodDisplay, ["5", "4"]));
+    return true;
+}
+
+(:test)
+function oneFrameSpareGetFrameStats(logger as Logger) as Boolean {
+    var theGame = new Game(TENPIN);
+    theGame.StartGame();
+    theGame.AddShot(5);
+    theGame.AddShot(5);
+    var frameStats = theGame.GetFrameStats();
+    Test.assertEqual(frameStats.Frames.size(), 1);
+    Test.assert(frameStats.Frames[0].RunningTotalWood == null);
+    Test.assert(compareDisplayWoodArray(frameStats.Frames[0].WoodDisplay, ["5", "/"]));
+    return true;
+}
+
+(:test)
+function oneFrameStrikeGetFrameStats(logger as Logger) as Boolean {
+    var theGame = new Game(TENPIN);
+    theGame.StartGame();
+    theGame.AddShot(10);
+    var frameStats = theGame.GetFrameStats();
+    Test.assertEqual(frameStats.Frames.size(), 1);
+    Test.assert(frameStats.Frames[0].RunningTotalWood == null);
+    Test.assert(compareDisplayWoodArray(frameStats.Frames[0].WoodDisplay, ["X", null] as Array<String>));
     return true;
 }
