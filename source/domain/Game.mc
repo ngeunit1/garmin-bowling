@@ -131,11 +131,11 @@ class Game {
         class SingleFrameStats {
             function initialize(frame as Frame, bonusWood as Number?) {
                 _wood = frame.GetWood();
-                RunningTotalWood = frame.GetBowledWood();
+                TotalWood = frame.GetBowledWood();
                 if (bonusWood == null) {
-                    RunningTotalWood = null; 
+                    TotalWood = null; 
                 } else {
-                    RunningTotalWood += bonusWood;
+                    TotalWood += bonusWood;
                 }
                 WoodDisplay = self.getWoodDisplay(_wood);
             }
@@ -171,7 +171,7 @@ class Game {
             } 
 
             
-            var RunningTotalWood as Number?;      
+            var TotalWood as Number?;      
             var WoodDisplay as Array<String>;
             private var _wood as Array<Number?>;
         }
