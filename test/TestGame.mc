@@ -1,6 +1,18 @@
 import Toybox.Lang;
 import Toybox.Test;
 
+function compareDisplayWoodShots(act as Array<Number>, exp as Array<Number>) as Boolean {
+    if (act.size() != exp.size()) {
+        return false;
+    }
+    for (var idx = 0; idx < exp.size(); idx++) {
+        if (!(act[idx].equals(exp[idx]))) {
+            return false;
+        }
+    }
+    return true;
+}
+
 (:test)
 function createGame(logger as Logger) as Boolean {
     var theGame = new Game(TENPIN);
@@ -119,7 +131,7 @@ function oneFrameGetFrameStats(logger as Logger) as Boolean {
     var frameStats = theGame.GetFrameStats();
     Test.assertEqual(frameStats.Frames.size(), 1);
     Test.assertEqual(frameStats.Frames[0].TotalWood as Number, 9);
-    Test.assert(compareDisplayWoodArray(frameStats.Frames[0].WoodDisplay, ["5", "4"]));
+    Test.assert(compareDisplayWoodShots(frameStats.Frames[0].WoodShots, [5, 4]));
     return true;
 }
 
@@ -132,7 +144,7 @@ function oneFrameSpareGetFrameStats(logger as Logger) as Boolean {
     var frameStats = theGame.GetFrameStats();
     Test.assertEqual(frameStats.Frames.size(), 1);
     Test.assert(frameStats.Frames[0].TotalWood == null);
-    Test.assert(compareDisplayWoodArray(frameStats.Frames[0].WoodDisplay, ["5", "/"]));
+    Test.assert(compareDisplayWoodShots(frameStats.Frames[0].WoodShots, [5,5]));
     return true;
 }
 
@@ -144,7 +156,7 @@ function oneFrameStrikeGetFrameStats(logger as Logger) as Boolean {
     var frameStats = theGame.GetFrameStats();
     Test.assertEqual(frameStats.Frames.size(), 1);
     Test.assert(frameStats.Frames[0].TotalWood == null);
-    Test.assert(compareDisplayWoodArray(frameStats.Frames[0].WoodDisplay, ["X", null] as Array<String>));
+    Test.assert(compareDisplayWoodShots(frameStats.Frames[0].WoodShots, [10]));
     return true;
 }
 
@@ -196,7 +208,7 @@ function oneFrameThreeShotGetFrameStats(logger as Logger) as Boolean {
     var frameStats = theGame.GetFrameStats();
     Test.assertEqual(frameStats.Frames.size(), 1);
     Test.assertEqual(frameStats.Frames[0].TotalWood as Number, 10);
-    Test.assert(compareDisplayWoodArray(frameStats.Frames[0].WoodDisplay, ["5", "3", "2"]));
+    Test.assert(compareDisplayWoodShots(frameStats.Frames[0].WoodShots, [5, 3, 2]));
     return true;
 }
 
@@ -211,8 +223,8 @@ function twoDifferentFramesGetFrameStats(logger as Logger) as Boolean {
     var frameStats = theGame.GetFrameStats();
     Test.assertEqual(frameStats.Frames.size(), 2);
     Test.assert(frameStats.Frames[0].TotalWood == 9);
-    Test.assert(compareDisplayWoodArray(frameStats.Frames[0].WoodDisplay, ["5", "4"]));
+    Test.assert(compareDisplayWoodShots(frameStats.Frames[0].WoodShots, [5, 4]));
     Test.assert(frameStats.Frames[1].TotalWood == 5);
-    Test.assert(compareDisplayWoodArray(frameStats.Frames[1].WoodDisplay, ["3", "2"]));
+    Test.assert(compareDisplayWoodShots(frameStats.Frames[1].WoodShots, [3, 2]));
     return true;
 }

@@ -1,4 +1,5 @@
 import Toybox.Lang;
+import Toybox.System;
 
 enum GameTypes {
     TENPIN,
@@ -123,7 +124,7 @@ class Game {
     class FrameStats {
         function initialize(frames as Array<Frame>, bonusWoods as Array<Number?>) {
             Frames = new SingleFrameStats[frames.size()];
-            for (var idx = 0; idx < frames.size(); idx ++) {
+            for (var idx = 0; idx < frames.size(); idx++) {
                 Frames[idx] = new SingleFrameStats(frames[idx], bonusWoods[idx]);
             }
         }
@@ -137,42 +138,26 @@ class Game {
                 } else {
                     TotalWood += bonusWood;
                 }
-                WoodDisplay = self.getWoodDisplay(_wood);
+                WoodShots = self.getWoodShots(_wood);
             }
 
-            static private function getWoodDisplay(wood as Array<Number?>) as Array<String> {
-                var woodDisplay = new String[wood.size()];
-                var culumativeWood = 0;
-                for (var idx = 0; idx < wood.size(); idx++) {
-                    if (wood[idx] == null) {
-                        break;
-                    }
-                    var currentWood = wood[idx] as Number;
-                    culumativeWood += currentWood;
-                    if(culumativeWood == 10) {
-                        if(idx == 0) {
-                            woodDisplay[idx] = "X";
-                            break;
-                        } else if(idx == 1) {
-                            woodDisplay[idx] = "/";
-                            break;
-                        } else {
-                            woodDisplay[idx] = currentWood.toString();
-                            break;
-                        }
-                    }
-                    if (currentWood == 0) {
-                        woodDisplay[idx] = "-";
-                    } else {
-                        woodDisplay[idx] = currentWood.toString();
-                    }
+            static private function getWoodShots(wood as Array<Number?>) as Array<Number> {
+                var woodSize = 0;
+                System.println(wood);
+                while (woodSize < wood.size() && wood[woodSize] != null) {
+                    System.println(woodSize);
+                    woodSize++;
                 }
-                return woodDisplay;
+                var woodShots = new Number[woodSize];
+                for (var idx = 0; idx < woodSize; idx++) {
+                    woodShots[idx] = wood[idx] as Number;
+                }
+                return woodShots;
             } 
 
             
             var TotalWood as Number?;      
-            var WoodDisplay as Array<String>;
+            var WoodShots as Array<Number>;
             private var _wood as Array<Number?>;
         }
 
