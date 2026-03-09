@@ -1,10 +1,19 @@
 import Toybox.Graphics;
+import Toybox.Lang;
 import Toybox.WatchUi;
+
+class TheGameType {
+    function initialize() {
+        theGameType = null; 
+    }
+    var theGameType as String?;
+}
 
 class garminbowlingView extends WatchUi.View {
 
     function initialize() {
         View.initialize();
+        _gt = new TheGameType();
     }
 
     // Load your resources here
@@ -16,6 +25,7 @@ class garminbowlingView extends WatchUi.View {
     // the state of this View and prepare it to be shown. This includes
     // loading resources into memory.
     function onShow() as Void {
+        getPicker(_gt);
     }
 
     // Update the view
@@ -30,4 +40,5 @@ class garminbowlingView extends WatchUi.View {
     function onHide() as Void {
     }
 
+    private var _gt as TheGameType;
 }
