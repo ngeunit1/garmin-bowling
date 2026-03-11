@@ -23,5 +23,10 @@ class GameSettingsDelegate extends WatchUi.Menu2InputDelegate {
             _gameSettings.LeagueLanes = !_gameSettings.LeagueLanes;
         }
     }
+
+    function onDone() as Void {
+        WatchUi.pushView(new StartGameView(), new StartGameDelegate(), WatchUi.SLIDE_IMMEDIATE);
+    }
+
     private var _gameSettings as GameSettings;
 }

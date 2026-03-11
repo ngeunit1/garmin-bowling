@@ -16,7 +16,6 @@ class GameTypePickerDelegate extends WatchUi.PickerDelegate {
     }
 
     function onAccept(values) {
-        System.println("Selected: " + values[0] as String);
         _gt.theGameType = values[0] as String;
         WatchUi.pushView(new Rez.Menus.GameSettings(), new GameSettingsDelegate(Application.getApp().gs), WatchUi.SLIDE_IMMEDIATE);
         return true;
