@@ -1,0 +1,4 @@
+<checkbox-menu id="GameSettings" title="GameSettings">
+    <checkbox-menu-item id="bumpers" label="Bumpers" checked="false" />
+    <checkbox-menu-item id="leagueLanes" label="Alternate Lanes" checked="false" />
+</checkbox-menu>
