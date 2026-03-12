@@ -32,6 +32,10 @@ tasks:
       - "{{.GARMIN_SDK}}/bin/connectiq &"
       - sleep 3
       - "./runtests.sh '{{.GARMIN_SDK}}/bin/monkeydo bin/{{.APP_NAME}}_test.prg {{.DEVICE}} -t'"
-
-
+  run:
+    deps: [build]
+    cmds:
+      - "{{.GARMIN_SDK}}/bin/connectiq &"
+      - sleep 3
+      - "{{.GARMIN_SDK}}/bin/monkeydo bin/{{.APP_NAME}}.prg {{.DEVICE}}"
 
