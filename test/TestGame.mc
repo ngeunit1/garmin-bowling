@@ -24,7 +24,6 @@ function createGame(logger as Logger) as Boolean {
 (:test)
 function gameAddShotLessThan10(logger as Logger) as Boolean {
     var theGame = new Game(TENPIN);
-    theGame.StartGame();
     var frameStatus = theGame.AddShot(5);
     Test.assertEqual(theGame.FrameNumber, 0);
     Test.assertEqual(frameStatus, FRAMENOTDONE);
@@ -35,7 +34,6 @@ function gameAddShotLessThan10(logger as Logger) as Boolean {
 (:test)
 function gameAddTwoShotsLessThan10(logger as Logger) as Boolean {
     var theGame = new Game(TENPIN);
-    theGame.StartGame();
     theGame.AddShot(5);
     var frameStatus = theGame.AddShot(4);
     Test.assertEqual(theGame.FrameNumber, 1);
@@ -47,7 +45,6 @@ function gameAddTwoShotsLessThan10(logger as Logger) as Boolean {
 (:test)
 function gameAddStrike(logger as Logger) as Boolean {
     var theGame = new Game(TENPIN);
-    theGame.StartGame();
     var frameStatus = theGame.AddShot(10);
     Test.assertEqual(theGame.FrameNumber, 1);
     Test.assertEqual(frameStatus, NEXTFRAME);
@@ -58,7 +55,6 @@ function gameAddStrike(logger as Logger) as Boolean {
 (:test)
 function gameAddThreeShotsLessThan10(logger as Logger) as Boolean {
     var theGame = new Game(CANDLEPIN);
-    theGame.StartGame();
     theGame.AddShot(2);
     theGame.AddShot(2);
     var frameStatus = theGame.AddShot(4);
@@ -71,7 +67,6 @@ function gameAddThreeShotsLessThan10(logger as Logger) as Boolean {
 (:test)
 function gameTenthFrameStrikeFrameNotDone(logger as Logger) as Boolean {
     var theGame = new Game(TENPIN);
-    theGame.StartGame();
     for (var idx = 0; idx < 9; idx++) {
         theGame.AddShot(10);
     }
@@ -85,7 +80,6 @@ function gameTenthFrameStrikeFrameNotDone(logger as Logger) as Boolean {
 (:test)
 function gameTenthFrameThreeShotsGameDone(logger as Logger) as Boolean {
     var theGame = new Game(TENPIN);
-    theGame.StartGame();
     for (var idx = 0; idx < 9; idx++) {
         theGame.AddShot(10);
     }
@@ -101,7 +95,6 @@ function gameTenthFrameThreeShotsGameDone(logger as Logger) as Boolean {
 (:test)
 function gameTenthFrameTwoShotsLessThan10GameDone(logger as Logger) as Boolean {
     var theGame = new Game(TENPIN);
-    theGame.StartGame();
     for (var idx = 0; idx < 9; idx++) {
         theGame.AddShot(10);
     }
@@ -116,7 +109,6 @@ function gameTenthFrameTwoShotsLessThan10GameDone(logger as Logger) as Boolean {
 (:test)
 function initialGetFrameStats(logger as Logger) as Boolean {
     var theGame = new Game(TENPIN);
-    theGame.StartGame();
     var frameStats = theGame.GetFrameStats();
     Test.assertEqual(frameStats.Frames.size(), 0);
     return true;
@@ -125,7 +117,6 @@ function initialGetFrameStats(logger as Logger) as Boolean {
 (:test)
 function oneFrameGetFrameStats(logger as Logger) as Boolean {
     var theGame = new Game(TENPIN);
-    theGame.StartGame();
     theGame.AddShot(5);
     theGame.AddShot(4);
     var frameStats = theGame.GetFrameStats();
@@ -138,7 +129,6 @@ function oneFrameGetFrameStats(logger as Logger) as Boolean {
 (:test)
 function oneFrameSpareGetFrameStats(logger as Logger) as Boolean {
     var theGame = new Game(TENPIN);
-    theGame.StartGame();
     theGame.AddShot(5);
     theGame.AddShot(5);
     var frameStats = theGame.GetFrameStats();
@@ -151,7 +141,6 @@ function oneFrameSpareGetFrameStats(logger as Logger) as Boolean {
 (:test)
 function oneFrameStrikeGetFrameStats(logger as Logger) as Boolean {
     var theGame = new Game(TENPIN);
-    theGame.StartGame();
     theGame.AddShot(10);
     var frameStats = theGame.GetFrameStats();
     Test.assertEqual(frameStats.Frames.size(), 1);
@@ -163,7 +152,6 @@ function oneFrameStrikeGetFrameStats(logger as Logger) as Boolean {
 (:test)
 function oneFrameStrikeWithIncompteFillGetFrameStats(logger as Logger) as Boolean {
     var theGame = new Game(TENPIN);
-    theGame.StartGame();
     theGame.AddShot(10);
     theGame.AddShot(5);
     var frameStats = theGame.GetFrameStats();
@@ -175,7 +163,6 @@ function oneFrameStrikeWithIncompteFillGetFrameStats(logger as Logger) as Boolea
 (:test)
 function oneFrameStrikeWithFillsGetFrameStats(logger as Logger) as Boolean {
     var theGame = new Game(TENPIN);
-    theGame.StartGame();
     theGame.AddShot(10);
     theGame.AddShot(5);
     theGame.AddShot(5);
@@ -188,7 +175,6 @@ function oneFrameStrikeWithFillsGetFrameStats(logger as Logger) as Boolean {
 (:test)
 function oneFrameStrikeWithStrikeFillsGetFrameStats(logger as Logger) as Boolean {
     var theGame = new Game(TENPIN);
-    theGame.StartGame();
     theGame.AddShot(10);
     theGame.AddShot(10);
     theGame.AddShot(10);
@@ -201,7 +187,6 @@ function oneFrameStrikeWithStrikeFillsGetFrameStats(logger as Logger) as Boolean
 (:test)
 function oneFrameThreeShotGetFrameStats(logger as Logger) as Boolean {
     var theGame = new Game(CANDLEPIN);
-    theGame.StartGame();
     theGame.AddShot(5);
     theGame.AddShot(3);
     theGame.AddShot(2);
@@ -215,7 +200,6 @@ function oneFrameThreeShotGetFrameStats(logger as Logger) as Boolean {
 (:test)
 function twoDifferentFramesGetFrameStats(logger as Logger) as Boolean {
     var theGame = new Game(TENPIN);
-    theGame.StartGame();
     theGame.AddShot(5);
     theGame.AddShot(4);
     theGame.AddShot(3);

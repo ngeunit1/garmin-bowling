@@ -44,13 +44,10 @@ class Game {
         _bonusShotsLeft = {} as Dictionary<Number, Number>;
         _bonusWood = {} as Dictionary<Number, Number>;
         _frames = new[10];
+        _frames[0] = new NormalFrame(ShotsPerFrame(GameType));
         _shotList = new[30];
         FrameNumber = 0;
         GameDone = false;
-    }
-
-    function StartGame() as Void {
-        _frames[0] = new NormalFrame(ShotsPerFrame(GameType));
     }
 
     private function appendShot(wood as Number) as Void {

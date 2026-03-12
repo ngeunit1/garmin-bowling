@@ -16,7 +16,6 @@ function compareDisplayWoodArray(act as Array<String>, exp as Array<String>) as 
 (:test)
 function oneFrameScore(logger as Logger) as Boolean {
     var theGame = new Game(TENPIN);
-    theGame.StartGame();
     var theScore = new Score(theGame);
     theGame.AddShot(5);
     theGame.AddShot(4);
@@ -31,7 +30,6 @@ function oneFrameScore(logger as Logger) as Boolean {
 (:test)
 function oneFrameSpareGetScore(logger as Logger) as Boolean {
     var theGame = new Game(TENPIN);
-    theGame.StartGame();
     var theScore = new Score(theGame);
     theGame.AddShot(5);
     theGame.AddShot(5);
@@ -46,7 +44,6 @@ function oneFrameSpareGetScore(logger as Logger) as Boolean {
 (:test)
 function oneFrameStrikeGetScore(logger as Logger) as Boolean {
     var theGame = new Game(TENPIN);
-    theGame.StartGame();
     var theScore = new Score(theGame);
     theGame.AddShot(10);
     var scoreDisplay = theScore.GetScore();
@@ -60,7 +57,6 @@ function oneFrameStrikeGetScore(logger as Logger) as Boolean {
 (:test)
 function oneFrameStrikeWithIncompteFillGetScore(logger as Logger) as Boolean {
     var theGame = new Game(TENPIN);
-    theGame.StartGame();
     var theScore = new Score(theGame);
     theGame.AddShot(10);
     theGame.AddShot(5);
@@ -75,7 +71,6 @@ function oneFrameStrikeWithIncompteFillGetScore(logger as Logger) as Boolean {
 (:test)
 function oneFrameStrikeWithFillsGetScore(logger as Logger) as Boolean {
     var theGame = new Game(TENPIN);
-    theGame.StartGame();
     var theScore = new Score(theGame);
     theGame.AddShot(10);
     theGame.AddShot(5);
@@ -91,7 +86,6 @@ function oneFrameStrikeWithFillsGetScore(logger as Logger) as Boolean {
 (:test)
 function oneFrameStrikeWithStrikeFillsGetScore(logger as Logger) as Boolean {
     var theGame = new Game(TENPIN);
-    theGame.StartGame();
     var theScore = new Score(theGame);
     theGame.AddShot(10);
     theGame.AddShot(10);
@@ -106,7 +100,6 @@ function oneFrameStrikeWithStrikeFillsGetScore(logger as Logger) as Boolean {
 (:test)
 function oneFrameThreeShotGetScore(logger as Logger) as Boolean {
     var theGame = new Game(CANDLEPIN);
-    theGame.StartGame();
     var theScore = new Score(theGame);
     theGame.AddShot(5);
     theGame.AddShot(3);
@@ -121,7 +114,6 @@ function oneFrameThreeShotGetScore(logger as Logger) as Boolean {
 (:test)
 function twoDifferentFramesGetScore(logger as Logger) as Boolean {
     var theGame = new Game(TENPIN);
-    theGame.StartGame();
     var theScore = new Score(theGame);
     theGame.AddShot(5);
     theGame.AddShot(4);
