@@ -1,0 +1,22 @@
+<resources xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://developer.garmin.com/downloads/connect-iq/resources.xsd">
+    <drawable-list id="Frames">
+        <shape type="rectangle" x="5%" y="35%" width="31%" height="35%" color="0x000000" border_width="2" border_color="0xFF0000"/>
+        <shape type="rectangle" x="15%" y="35%" width="11%" height="10%" color="0x000000" border_width="2" border_color="0xFF0000"/>
+        <shape type="rectangle" x="25%" y="35%" width="11%" height="10%" color="0x000000" border_width="2" border_color="0xFF0000"/>
+        <shape type="rectangle" x="35%" y="35%" width="31%" height="35%" color="0x000000" border_width="2" border_color="0xFF0000"/>
+        <shape type="rectangle" x="45%" y="35%" width="11%" height="10%" color="0x000000" border_width="2" border_color="0xFF0000"/>
+        <shape type="rectangle" x="55%" y="35%" width="11%" height="10%" color="0x000000" border_width="2" border_color="0xFF0000"/>
+        <shape type="rectangle" x="65%" y="35%" width="31%" height="35%" color="0x000000" border_width="2" border_color="0xFF0000"/>
+        <shape type="rectangle" x="75%" y="35%" width="11%" height="10%" color="0x000000" border_width="2" border_color="0xFF0000"/>
+        <shape type="rectangle" x="85%" y="35%" width="11%" height="10%" color="0x000000" border_width="2" border_color="0xFF0000"/>
+    </drawable-list>
+    <drawable-list id="Frame1_3rdBox">
+        <shape type="rectangle" x="5%" y="35%" width="11%" height="10%" color="0x000000" border_width="2" border_color="0xFF0000"/>
+    </drawable-list>
+    <drawable-list id="Frame2_3rdBox">
+        <shape type="rectangle" x="35%" y="35%" width="11%" height="10%" color="0x000000" border_width="2" border_color="0xFF0000"/>
+    </drawable-list>
+    <drawable-list id="Frame3_3rdBox">
+        <shape type="rectangle" x="65%" y="35%" width="11%" height="10%" color="0x000000" border_width="2" border_color="0xFF0000"/>
+    </drawable-list>
+</resources>
