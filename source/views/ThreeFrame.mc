@@ -10,6 +10,7 @@ class ThreeFrameDelegate extends WatchUi.BehaviorDelegate {
 class ThreeFrameView extends WatchUi.View {
     function initialize() {
         View.initialize();
+        _gt = Application.getApp().gt;
     }
 
     function onLayout(dc) {
@@ -17,7 +18,11 @@ class ThreeFrameView extends WatchUi.View {
     }
 
     function onUpdate(dc) {
+        var frame0shot0 = View.findDrawableById("Frame0Shot0") as WatchUi.Drawable;
+        frame0shot0.setVisible(false);
+        
         View.onUpdate(dc);
     }
 
+    hidden var _gt as TheGameType;
 }

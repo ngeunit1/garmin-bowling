@@ -6,7 +6,7 @@ class TheGameType {
     function initialize() {
         theGameType = null; 
     }
-    var theGameType as String?;
+    var theGameType as GameTypes?;
 }
 
 class GameTypePickerDelegate extends WatchUi.PickerDelegate {
@@ -15,8 +15,20 @@ class GameTypePickerDelegate extends WatchUi.PickerDelegate {
         _gt = gt;
     }
 
-    function onAccept(values) {
-        _gt.theGameType = values[0] as String;
+    function onAccept(values) { //_gt.theGameType
+        var gameTypeString = values[0] as String;
+        switch (gameTypeString) {
+            case "Tenpin": {
+                _gt.theGameType = TENPIN;
+                break;
+            }
+            case "Candlepin": {
+                _gt.theGameType = CANDLEPIN;
+            } 
+            case "Duckpin": {
+                _gt.theGameType = DUCKPIN;
+            }
+        }
         WatchUi.pushView(new Rez.Menus.GameSettings(), new GameSettingsDelegate(Application.getApp().gs), WatchUi.SLIDE_IMMEDIATE);
         return true;
     }

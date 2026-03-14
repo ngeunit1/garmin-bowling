@@ -1,3 +1,18 @@
 <layout id="ThreeFrames" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://developer.garmin.com/downloads/connect-iq/resources.xsd">
     <drawable id="Frames"/>
+    <text-area id="Frame0Shot0" text="5" x="5%" y="35%" justification="Graphics.TEXT_JUSTIFY_CENTER|Graphics.TEXT_JUSTIFY_VCENTER" width="11%" height="10%" font="Graphics.FONT_XTINY"/>
+    <text-area id="Frame0Shot1" text="5" x="15%" y="35%" justification="Graphics.TEXT_JUSTIFY_CENTER|Graphics.TEXT_JUSTIFY_VCENTER" width="11%" height="10%" font="Graphics.FONT_XTINY"/>
+    <text-area id="Frame0Shot2" text="5" x="25%" y="35%" justification="Graphics.TEXT_JUSTIFY_CENTER|Graphics.TEXT_JUSTIFY_VCENTER" width="11%" height="10%" font="Graphics.FONT_XTINY"/>
+    <text-area id="Frame1Shot0" text="5" x="35%" y="35%" justification="Graphics.TEXT_JUSTIFY_CENTER|Graphics.TEXT_JUSTIFY_VCENTER" width="11%" height="10%" font="Graphics.FONT_XTINY"/>
+    <text-area id="Frame1Shot1" text="5" x="45%" y="35%" justification="Graphics.TEXT_JUSTIFY_CENTER|Graphics.TEXT_JUSTIFY_VCENTER" width="11%" height="10%" font="Graphics.FONT_XTINY"/>
+    <text-area id="Frame1Shot2" text="5" x="55%" y="35%" justification="Graphics.TEXT_JUSTIFY_CENTER|Graphics.TEXT_JUSTIFY_VCENTER" width="11%" height="10%" font="Graphics.FONT_XTINY"/>
+    <text-area id="Frame2Shot0" text="5" x="65%" y="35%" justification="Graphics.TEXT_JUSTIFY_CENTER|Graphics.TEXT_JUSTIFY_VCENTER" width="11%" height="10%" font="Graphics.FONT_XTINY"/>
+    <text-area id="Frame2Shot1" text="5" x="75%" y="35%" justification="Graphics.TEXT_JUSTIFY_CENTER|Graphics.TEXT_JUSTIFY_VCENTER" width="11%" height="10%" font="Graphics.FONT_XTINY"/>
+    <text-area id="Frame2Shot2" text="5" x="85%" y="35%" justification="Graphics.TEXT_JUSTIFY_CENTER|Graphics.TEXT_JUSTIFY_VCENTER" width="11%" height="10%" font="Graphics.FONT_XTINY"/>
+    <text-area id="Frame0Score" text="123" x="5%" y="45%" justification="Graphics.TEXT_JUSTIFY_CENTER|Graphics.TEXT_JUSTIFY_VCENTER" width="31%" height="25%" font="Graphics.FONT_MEDIUM"/>
+    <text-area id="Frame1Score" text="123" x="35%" y="45%" justification="Graphics.TEXT_JUSTIFY_CENTER|Graphics.TEXT_JUSTIFY_VCENTER" width="31%" height="25%" font="Graphics.FONT_MEDIUM"/>
+    <text-area id="Frame2Score" text="123" x="65%" y="45%" justification="Graphics.TEXT_JUSTIFY_CENTER|Graphics.TEXT_JUSTIFY_VCENTER" width="31%" height="25%" font="Graphics.FONT_MEDIUM"/>
+    <text-area id="Frame0Label" text="3" x="15%" y="25%" justification="Graphics.TEXT_JUSTIFY_CENTER|Graphics.TEXT_JUSTIFY_VCENTER" width="11%" height="10%" font="Graphics.FONT_XTINY"/>
+    <text-area id="Frame1Label" text="3" x="45%" y="25%" justification="Graphics.TEXT_JUSTIFY_CENTER|Graphics.TEXT_JUSTIFY_VCENTER" width="11%" height="10%" font="Graphics.FONT_XTINY"/>
+    <text-area id="Frame2Label" text="3" x="75%" y="25%" justification="Graphics.TEXT_JUSTIFY_CENTER|Graphics.TEXT_JUSTIFY_VCENTER" width="11%" height="10%" font="Graphics.FONT_XTINY"/>
 </layout>
