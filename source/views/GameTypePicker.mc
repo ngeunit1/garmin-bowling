@@ -4,9 +4,9 @@ import Toybox.WatchUi;
 
 class TheGameType {
     function initialize() {
-        theGameType = null; 
+        gameType = null; 
     }
-    var theGameType as GameTypes?;
+    var gameType as GameTypes?;
 }
 
 class GameTypePickerDelegate extends WatchUi.PickerDelegate {
@@ -15,18 +15,18 @@ class GameTypePickerDelegate extends WatchUi.PickerDelegate {
         _gt = gt;
     }
 
-    function onAccept(values) { //_gt.theGameType
+    function onAccept(values) {
         var gameTypeString = values[0] as String;
         switch (gameTypeString) {
             case "Tenpin": {
-                _gt.theGameType = TENPIN;
+                _gt.gameType = TENPIN;
                 break;
             }
             case "Candlepin": {
-                _gt.theGameType = CANDLEPIN;
+                _gt.gameType = CANDLEPIN;
             } 
             case "Duckpin": {
-                _gt.theGameType = DUCKPIN;
+                _gt.gameType = DUCKPIN;
             }
         }
         WatchUi.pushView(new Rez.Menus.GameSettings(), new GameSettingsDelegate(Application.getApp().gs), WatchUi.SLIDE_IMMEDIATE);
