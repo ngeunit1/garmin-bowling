@@ -24,9 +24,11 @@ class GameTypePickerDelegate extends WatchUi.PickerDelegate {
             }
             case "Candlepin": {
                 _gt.gameType = CANDLEPIN;
+                break;
             } 
             case "Duckpin": {
                 _gt.gameType = DUCKPIN;
+                break;
             }
         }
         WatchUi.pushView(new Rez.Menus.GameSettings(), new GameSettingsDelegate(Application.getApp().gs), WatchUi.SLIDE_IMMEDIATE);
