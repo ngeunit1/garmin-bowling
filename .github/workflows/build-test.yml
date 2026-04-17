@@ -15,6 +15,8 @@ jobs:
       credentials:
         username: ngeunit1
         password: ${{ secrets.DOCKER_CONTAINER_REGISTRY_TOKEN }}
+    env:
+      HOME: /root
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
