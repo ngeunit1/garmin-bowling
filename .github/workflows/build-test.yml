@@ -11,6 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: ngeunit1/garmin-docker:v0.0.3
+      options: --user root
       credentials:
         username: ngeunit1
         password: ${{ secrets.DOCKER_CONTAINER_REGISTRY_TOKEN }}
