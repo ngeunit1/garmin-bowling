@@ -8,7 +8,7 @@ vars:
   GARMIN_SDK: 
     sh: cat ~/.Garmin/ConnectIQ/current-sdk.cfg
   JAVA_OPTIONS: -Xms1g -Dfile.encoding=UTF-8 -Dapple.awt.UIElement=true
-  PRIVATE_KEY: /home/$USER/.keys/garmin/developer_key
+  PRIVATE_KEY: ~/.keys/garmin/developer_key
 
 tasks:
   build-cmd:

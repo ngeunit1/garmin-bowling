@@ -1,0 +1,23 @@
+name: Build and Test
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: ngeunit1/garmin-docker:latest
+      credentials:
+        username: ngeunit1
+        password: ${{ secrets.DOCKER_CONTAINER_REGISTRY_TOKEN }}
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: Run build
+      run: task build
+  
+    
