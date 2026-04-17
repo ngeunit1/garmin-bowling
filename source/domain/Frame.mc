@@ -10,7 +10,7 @@ typedef Frame as interface {
 
 class InvalidFrameException extends Lang.Exception {
     function initialize(errorMessage as String) {
-        Exception.initializee();
+        Exception.initialize();
         _errorMessage = errorMessage;
     }
     function getErrorMessage() {
