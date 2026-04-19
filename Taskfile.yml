@@ -29,9 +29,39 @@ tasks:
         vars:
           PRG_NAME: "{{.APP_NAME}}_test"
           TEST_FLAG: "-t"
-      - "{{.GARMIN_SDK}}/bin/connectiq &"
-      - sleep 3
-      - "./runtests.sh '{{.GARMIN_SDK}}/bin/monkeydo bin/{{.APP_NAME}}_test.prg {{.DEVICE}} -t'"
+      - |
+          CONNECTIQ_BIN="{{.GARMIN_SDK}}/bin/connectiq"
+          CONNECTIQ_LOG=/tmp/connectiq.log
+          CONNECTIQ_PID=""
+
+          cleanup() {
+            if [ -n "$CONNECTIQ_PID" ]; then
+              kill -TERM "$CONNECTIQ_PID" 2>/dev/null || true
+            fi
+            pkill -TERM -f "$CONNECTIQ_BIN" || true
+            pkill -TERM -f '/simulator([[:space:]]|$)' || true
+            pkill -TERM -f '^Xvfb ' || true
+            sleep 2
+            if [ -n "$CONNECTIQ_PID" ]; then
+              kill -KILL "$CONNECTIQ_PID" 2>/dev/null || true
+            fi
+            pkill -KILL -f "$CONNECTIQ_BIN" || true
+            pkill -KILL -f '/simulator([[:space:]]|$)' || true
+            pkill -KILL -f '^Xvfb ' || true
+          }
+
+          nohup "$CONNECTIQ_BIN" >"$CONNECTIQ_LOG" 2>&1 &
+          CONNECTIQ_PID="$!"
+          sleep 3
+
+          if ./runtests.sh "{{.GARMIN_SDK}}/bin/monkeydo bin/{{.APP_NAME}}_test.prg {{.DEVICE}} -t"; then
+            result=0
+          else
+            result=$?
+          fi
+
+          cleanup
+          exit "$result"
   run:
     deps: [build]
     cmds:

@@ -10,7 +10,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     container:
-      image: ngeunit1/garmin-docker:v0.0.3
+      image: ngeunit1/garmin-docker:v0.0.4
       options: --user root
       credentials:
         username: ngeunit1
@@ -25,7 +25,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     container:
-      image: ngeunit1/garmin-docker:v0.0.3
+      image: ngeunit1/garmin-docker:v0.0.4
       options: --user root
       credentials:
         username: ngeunit1
