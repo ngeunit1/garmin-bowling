@@ -33,24 +33,29 @@ tasks:
           CONNECTIQ_BIN="{{.GARMIN_SDK}}/bin/connectiq"
           CONNECTIQ_LOG=/tmp/connectiq.log
           CONNECTIQ_PID=""
+          XVFB_PID=""
 
           cleanup() {
-            if [ -n "$CONNECTIQ_PID" ]; then
-              kill -TERM "$CONNECTIQ_PID" 2>/dev/null || true
-            fi
             pkill -TERM -f "$CONNECTIQ_BIN" || true
             pkill -TERM -f '/simulator([[:space:]]|$)' || true
-            pkill -TERM -f '^Xvfb ' || true
             sleep 2
-            if [ -n "$CONNECTIQ_PID" ]; then
-              kill -KILL "$CONNECTIQ_PID" 2>/dev/null || true
-            fi
             pkill -KILL -f "$CONNECTIQ_BIN" || true
             pkill -KILL -f '/simulator([[:space:]]|$)' || true
-            pkill -KILL -f '^Xvfb ' || true
+            if [ -n "$XVFB_PID" ]; then
+              kill -TERM "$XVFB_PID" 2>/dev/null || true
+              sleep 1
+              kill -KILL "$XVFB_PID" 2>/dev/null || true
+            fi
           }
 
-          nohup "$CONNECTIQ_BIN" >"$CONNECTIQ_LOG" 2>&1 &
+          if [ -z "${DISPLAY:-}" ]; then
+            nohup Xvfb :99 -screen 0 1024x768x24 -nolisten tcp >/tmp/xvfb-task.log 2>&1 &
+            XVFB_PID="$!"
+            export DISPLAY=:99
+            sleep 1
+          fi
+
+          "$CONNECTIQ_BIN" >"$CONNECTIQ_LOG" 2>&1 &
           CONNECTIQ_PID="$!"
           sleep 3
 
