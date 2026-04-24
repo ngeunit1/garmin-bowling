@@ -36,9 +36,15 @@ tasks:
           XVFB_PID=""
 
           cleanup() {
+            if [ -n "$CONNECTIQ_PID" ]; then
+              kill -TERM "$CONNECTIQ_PID" 2>/dev/null || true
+            fi
             pkill -TERM -f "$CONNECTIQ_BIN" || true
             pkill -TERM -f '/simulator([[:space:]]|$)' || true
             sleep 2
+            if [ -n "$CONNECTIQ_PID" ]; then
+              kill -KILL "$CONNECTIQ_PID" 2>/dev/null || true
+            fi
             pkill -KILL -f "$CONNECTIQ_BIN" || true
             pkill -KILL -f '/simulator([[:space:]]|$)' || true
             if [ -n "$XVFB_PID" ]; then
@@ -55,7 +61,7 @@ tasks:
             sleep 1
           fi
 
-          "$CONNECTIQ_BIN" >"$CONNECTIQ_LOG" 2>&1 &
+          nohup "$CONNECTIQ_BIN" >"$CONNECTIQ_LOG" 2>&1 &
           CONNECTIQ_PID="$!"
           sleep 3
 
