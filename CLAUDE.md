@@ -7,3 +7,11 @@
 - Do NOT read source files under `source/` when answering test questions or performing test analysis.
 - If a behavior or rule is ambiguous, surface the ambiguity and update `PROJECT.md` to clarify it before proceeding.
 - `PROJECT.md` is the source of truth for what the correct behavior is. The implementation may diverge from it; that is a bug in the implementation, not in the spec.
+
+## Pre-Commit Requirements
+
+Before every commit, run both:
+1. `task build` — must succeed (clean build, no errors)
+2. `task test` — must be green (all tests passing)
+
+Do not commit if either fails.
