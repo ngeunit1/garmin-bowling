@@ -42,9 +42,9 @@ function addThreeShotLessThan10(logger as Logger) as Boolean {
 (:test)
 function addShotStrike(logger as Logger) as Boolean {
     var theFrame = new NormalFrame(2);
-    theFrame.addShot(10);
+    theFrame.addShot(STRIKE);
     Test.assertEqual(theFrame.Bowled, true);
-    Test.assertEqual(theFrame.GetBowledWood(), 10);
+    Test.assertEqual(theFrame.GetBowledWood(), STRIKE);
     Test.assertEqual(theFrame.GetNumberBonusShots(), 2);
     return true;
 }
@@ -82,6 +82,7 @@ function addShotErrorTooManyShots(logger as Logger) as Boolean {
     } catch (e instanceof InvalidFrameException) {
         return true;
     }
+    logger.debug("Expected InvalidFrameException was not thrown");
     return false;
 }
 
@@ -94,6 +95,7 @@ function addShotErrorGetBowledWoodNotBowled(logger as Logger) as Boolean {
     } catch (e instanceof InvalidFrameException) {
         return true;
     }
+    logger.debug("Expected InvalidFrameException was not thrown");
     return false;
 }
 
@@ -106,6 +108,7 @@ function addShotErrorGetBonusShotsNotBowled(logger as Logger) as Boolean {
     } catch (e instanceof InvalidFrameException) {
         return true;
     }
+    logger.debug("Expected InvalidFrameException was not thrown");
     return false;
 }
 
@@ -150,7 +153,7 @@ function addThreeShotLessThan10TenthFrame(logger as Logger) as Boolean {
 (:test)
 function addShotStrikeTenthFrame(logger as Logger) as Boolean {
     var theFrame = new TenthFrame(2);
-    theFrame.addShot(10);
+    theFrame.addShot(STRIKE);
     Test.assertEqual(theFrame.Bowled, false);
     return true;
 }
@@ -158,7 +161,7 @@ function addShotStrikeTenthFrame(logger as Logger) as Boolean {
 (:test)
 function addShotStrikeWithFillTenthFrame(logger as Logger) as Boolean {
     var theFrame = new TenthFrame(2);
-    theFrame.addShot(10);
+    theFrame.addShot(STRIKE);
     theFrame.addShot(8);
     theFrame.addShot(1);
     Test.assertEqual(theFrame.Bowled, true);
@@ -210,6 +213,7 @@ function addShotErrorTooManyShotsTenthFrame(logger as Logger) as Boolean {
     } catch (e instanceof InvalidFrameException) {
         return true;
     }
+    logger.debug("Expected InvalidFrameException was not thrown");
     return false;
 }
 
@@ -222,6 +226,7 @@ function addShotErrorGetBowledWoodNotBowledTenthFrame(logger as Logger) as Boole
     } catch (e instanceof InvalidFrameException) {
         return true;
     }
+    logger.debug("Expected InvalidFrameException was not thrown");
     return false;
 }
 
@@ -234,5 +239,6 @@ function addShotErrorGetBonusShotsNotBowledTenthFrame(logger as Logger) as Boole
     } catch (e instanceof InvalidFrameException) {
         return true;
     }
+    logger.debug("Expected InvalidFrameException was not thrown");
     return false;
 }
