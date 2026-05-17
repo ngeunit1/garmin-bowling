@@ -151,6 +151,7 @@ function oneFrameStrikeWithFillsGetFrameStats(logger as Logger) as Boolean {
     var frameStats = theGame.GetFrameStats();
     Test.assertEqual(frameStats.Frames.size(), 2);
     Test.assertEqual(frameStats.Frames[0].TotalWood as Number, 20);
+    Test.assert(compareWoodShots(frameStats.Frames[0].WoodShots as Array<Number?>, [10]));
     return true;
 }
 
@@ -167,7 +168,33 @@ function oneFrameStrikeWithStrikeFillsGetFrameStats(logger as Logger) as Boolean
 }
 
 (:test)
+function oneFrameSpareWithFillsGetFrameStats(logger as Logger) as Boolean {
+    var theGame = new Game(TENPIN);
+    theGame.AddShot(6);
+    theGame.AddShot(4);
+    theGame.AddShot(5);
+    theGame.AddShot(5);
+    var frameStats = theGame.GetFrameStats();
+    Test.assertEqual(frameStats.Frames.size(), 2);
+    Test.assertEqual(frameStats.Frames[0].TotalWood as Number, 15);
+    return true;
+}
+
+(:test)
 function oneFrameCandlepinGetFrameStats(logger as Logger) as Boolean {
+    var theGame = new Game(CANDLEPIN);
+    theGame.AddShot(5);
+    theGame.AddShot(3);
+    theGame.AddShot(1);
+    var frameStats = theGame.GetFrameStats();
+    Test.assertEqual(frameStats.Frames.size(), 1);
+    Test.assertEqual(frameStats.Frames[0].TotalWood as Number, 9);
+    Test.assert(compareWoodShots(frameStats.Frames[0].WoodShots as Array<Number?>, [5, 3, 1]));
+    return true;
+}
+
+(:test)
+function oneFrameCandlepinTenboxGetFrameStats(logger as Logger) as Boolean {
     var theGame = new Game(CANDLEPIN);
     theGame.AddShot(5);
     theGame.AddShot(3);
@@ -176,6 +203,18 @@ function oneFrameCandlepinGetFrameStats(logger as Logger) as Boolean {
     Test.assertEqual(frameStats.Frames.size(), 1);
     Test.assertEqual(frameStats.Frames[0].TotalWood as Number, 10);
     Test.assert(compareWoodShots(frameStats.Frames[0].WoodShots as Array<Number?>, [5, 3, 2]));
+    return true;
+}
+
+(:test)
+function oneFrameCandlepinSpareWithIncompleteFillsGetFrameStats(logger as Logger) as Boolean {
+    var theGame = new Game(CANDLEPIN);
+    theGame.AddShot(6);
+    theGame.AddShot(4);
+    var frameStats = theGame.GetFrameStats();
+    Test.assertEqual(frameStats.Frames.size(), 1);
+    Test.assert(frameStats.Frames[0].TotalWood == null);
+    Test.assert(compareWoodShots(frameStats.Frames[0].WoodShots as Array<Number?>, [6, 4]));
     return true;
 }
 
