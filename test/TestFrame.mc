@@ -75,6 +75,7 @@ function addShotStrikeCandlepin(logger as Logger) as Boolean {
     Test.assertEqual(theFrame.Bowled, true);
     Test.assertEqual(theFrame.GetBowledWood(), STRIKE);
     Test.assertEqual(theFrame.GetNumberBonusShots(), 2);
+    Test.assert(compareWoodShots(theFrame.GetWood(), [10]));
     return true;
 }
 
@@ -86,6 +87,7 @@ function addShotSpare(logger as Logger) as Boolean {
     Test.assertEqual(theFrame.Bowled, true);
     Test.assertEqual(theFrame.GetBowledWood(), 10);
     Test.assertEqual(theFrame.GetNumberBonusShots(), 1);
+    Test.assert(compareWoodShots(theFrame.GetWood(), [9, 1]));
     return true;
 }
 
@@ -97,6 +99,7 @@ function addShotSpareCandlepin(logger as Logger) as Boolean {
     Test.assertEqual(theFrame.Bowled, true);
     Test.assertEqual(theFrame.GetBowledWood(), 10);
     Test.assertEqual(theFrame.GetNumberBonusShots(), 1);
+    Test.assert(compareWoodShots(theFrame.GetWood(), [9, 1]));
     return true;
 }
 
@@ -109,6 +112,7 @@ function addThreeShotsEqual10(logger as Logger) as Boolean {
     Test.assertEqual(theFrame.Bowled, true);
     Test.assertEqual(theFrame.GetBowledWood(), 10);
     Test.assertEqual(theFrame.GetNumberBonusShots(), 0);
+    Test.assert(compareWoodShots(theFrame.GetWood(), [8, 1, 1]));
     return true;
 }
 
@@ -116,6 +120,21 @@ function addThreeShotsEqual10(logger as Logger) as Boolean {
 function addShotErrorTooManyShots(logger as Logger) as Boolean {
     var theFrame = new NormalFrame(2);
     theFrame.addShot(8);
+    theFrame.addShot(1);
+    try {
+        theFrame.addShot(1);
+    } catch (e instanceof InvalidFrameException) {
+        return true;
+    }
+    logger.debug("Expected InvalidFrameException was not thrown");
+    return false;
+}
+
+(:test)
+function addShotErrorTooManyShotsCandlepin(logger as Logger) as Boolean {
+    var theFrame = new NormalFrame(3);
+    theFrame.addShot(6);
+    theFrame.addShot(1);
     theFrame.addShot(1);
     try {
         theFrame.addShot(1);
@@ -301,6 +320,21 @@ function addThreeShotsEqual10TenthFrame(logger as Logger) as Boolean {
 function addShotErrorTooManyShotsTenthFrame(logger as Logger) as Boolean {
     var theFrame = new TenthFrame(2);
     theFrame.addShot(8);
+    theFrame.addShot(1);
+    try {
+        theFrame.addShot(1);
+    } catch (e instanceof InvalidFrameException) {
+        return true;
+    }
+    logger.debug("Expected InvalidFrameException was not thrown");
+    return false;
+}
+
+(:test)
+function addShotErrorTooManyShotsTenthFrameCandlepin(logger as Logger) as Boolean {
+    var theFrame = new TenthFrame(3);
+    theFrame.addShot(7);
+    theFrame.addShot(1);
     theFrame.addShot(1);
     try {
         theFrame.addShot(1);
