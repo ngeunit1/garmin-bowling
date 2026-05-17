@@ -65,6 +65,7 @@ function addShotStrike(logger as Logger) as Boolean {
     Test.assertEqual(theFrame.Bowled, true);
     Test.assertEqual(theFrame.GetBowledWood(), STRIKE);
     Test.assertEqual(theFrame.GetNumberBonusShots(), 2);
+    Test.assert(compareWoodShots(theFrame.GetWood(), [10]));
     return true;
 }
 
@@ -207,11 +208,12 @@ function addTwoShotLessThan10TenthFrame(logger as Logger) as Boolean {
     Test.assertEqual(theFrame.Bowled, true);
     Test.assertEqual(theFrame.GetBowledWood(), 9);
     Test.assertEqual(theFrame.GetNumberBonusShots(), 0);
+    Test.assert(compareWoodShots(theFrame.GetWood(), [5, 4]));
     return true;
 }
 
 (:test)
-function addThreeShotLessThan10TenthFrame(logger as Logger) as Boolean {
+function addThreeShotsLessThan10TenthFrame(logger as Logger) as Boolean {
     var theFrame = new TenthFrame(3);
     theFrame.addShot(3);
     theFrame.addShot(3);
@@ -219,6 +221,7 @@ function addThreeShotLessThan10TenthFrame(logger as Logger) as Boolean {
     Test.assertEqual(theFrame.Bowled, true);
     Test.assertEqual(theFrame.GetBowledWood(), 9);
     Test.assertEqual(theFrame.GetNumberBonusShots(), 0);
+    Test.assert(compareWoodShots(theFrame.GetWood(), [3, 3, 3]));
     return true;
 }
 
@@ -247,6 +250,7 @@ function addShotStrikeWithFillTenthFrame(logger as Logger) as Boolean {
     Test.assertEqual(theFrame.Bowled, true);
     Test.assertEqual(theFrame.GetBowledWood(), 19);
     Test.assertEqual(theFrame.GetNumberBonusShots(), 0);
+    Test.assert(compareWoodShots(theFrame.GetWood(), [10, 8, 1]));
     return true;
 }
 
@@ -259,6 +263,7 @@ function addShotStrikeWithFillTenthFrameCandlepin(logger as Logger) as Boolean {
     Test.assertEqual(theFrame.Bowled, true);
     Test.assertEqual(theFrame.GetBowledWood(), 19);
     Test.assertEqual(theFrame.GetNumberBonusShots(), 0);
+    Test.assert(compareWoodShots(theFrame.GetWood(), [10, 8, 1]));
     return true;
 }
 
@@ -289,6 +294,7 @@ function addShotSpareWithFillTenthFrame(logger as Logger) as Boolean {
     Test.assertEqual(theFrame.Bowled, true);
     Test.assertEqual(theFrame.GetBowledWood(), 18);
     Test.assertEqual(theFrame.GetNumberBonusShots(), 0);
+    Test.assert(compareWoodShots(theFrame.GetWood(), [9, 1, 8]));
     return true;
 }
 
@@ -301,6 +307,7 @@ function addShotSpareWithFillTenthFrameCandlepin(logger as Logger) as Boolean {
     Test.assertEqual(theFrame.Bowled, true);
     Test.assertEqual(theFrame.GetBowledWood(), 18);
     Test.assertEqual(theFrame.GetNumberBonusShots(), 0);
+    Test.assert(compareWoodShots(theFrame.GetWood(), [9, 1, 8]));
     return true;
 }
 
@@ -313,6 +320,7 @@ function addThreeShotsEqual10TenthFrame(logger as Logger) as Boolean {
     Test.assertEqual(theFrame.Bowled, true);
     Test.assertEqual(theFrame.GetBowledWood(), 10);
     Test.assertEqual(theFrame.GetNumberBonusShots(), 0);
+    Test.assert(compareWoodShots(theFrame.GetWood(), [8, 1, 1]));
     return true;
 }
 
@@ -364,6 +372,19 @@ function addShotErrorGetBonusShotsNotBowledTenthFrame(logger as Logger) as Boole
     theFrame.addShot(8);
     try {
         theFrame.GetNumberBonusShots();
+    } catch (e instanceof InvalidFrameException) {
+        return true;
+    }
+    logger.debug("Expected InvalidFrameException was not thrown");
+    return false;
+}
+
+(:test)
+function addShotErrorGetWoodNotBowledTenthFrame(logger as Logger) as Boolean {
+    var theFrame = new TenthFrame(2);
+    theFrame.addShot(8);
+    try {
+        theFrame.GetWood();
     } catch (e instanceof InvalidFrameException) {
         return true;
     }
