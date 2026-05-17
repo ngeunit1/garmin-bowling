@@ -81,7 +81,7 @@ function oneFrameStrikeWithStrikeFillsGetScore(logger as Logger) as Boolean {
 }
 
 (:test)
-function oneFrameThreeShotGetScore(logger as Logger) as Boolean {
+function oneFrameCandlepinGetScore(logger as Logger) as Boolean {
     var theGame = new Game(CANDLEPIN);
     theGame.AddShot(5);
     theGame.AddShot(3);
