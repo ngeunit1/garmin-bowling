@@ -15,6 +15,32 @@ function oneFrameScore(logger as Logger) as Boolean {
 }
 
 (:test)
+function oneFrameScoreGutterScore(logger as Logger) as Boolean {
+    var theGame = new Game(TENPIN);
+    theGame.AddShot(5);
+    theGame.AddShot(0);
+    var theScore = new Score(theGame);
+    var scoreDisplay = theScore.GetScore();
+    Test.assertEqual(scoreDisplay.DisplayWood.size(), 1);
+    Test.assert(compareWoodDisplay(scoreDisplay.DisplayWood[0].Display, ["5", "-"]));
+    Test.assertEqual(scoreDisplay.RunningTotal[0] as Number, 5);
+    return true;
+}
+
+(:test)
+function oneFrameDoubleGutterScore(logger as Logger) as Boolean {
+    var theGame = new Game(TENPIN);
+    theGame.AddShot(0);
+    theGame.AddShot(0);
+    var theScore = new Score(theGame);
+    var scoreDisplay = theScore.GetScore();
+    Test.assertEqual(scoreDisplay.DisplayWood.size(), 1);
+    Test.assert(compareWoodDisplay(scoreDisplay.DisplayWood[0].Display, ["-", "-"]));
+    Test.assertEqual(scoreDisplay.RunningTotal[0] as Number, 0);
+    return true;
+}
+
+(:test)
 function oneFrameSpareGetScore(logger as Logger) as Boolean {
     var theGame = new Game(TENPIN);
     theGame.AddShot(5);
@@ -62,6 +88,35 @@ function oneFrameStrikeWithFillsGetScore(logger as Logger) as Boolean {
     var scoreDisplay = theScore.GetScore();
     Test.assertEqual(scoreDisplay.DisplayWood.size(), 2);
     Test.assert(compareWoodDisplay(scoreDisplay.DisplayWood[0].Display, ["X"]));
+    Test.assertEqual(scoreDisplay.RunningTotal[0] as Number, 20);
+    return true;
+}
+
+(:test)
+function oneFrameSpareWithFillGetScore(logger as Logger) as Boolean {
+    var theGame = new Game(TENPIN);
+    theGame.AddShot(5);
+    theGame.AddShot(5);
+    theGame.AddShot(6);
+    var theScore = new Score(theGame);
+    var scoreDisplay = theScore.GetScore();
+    Test.assertEqual(scoreDisplay.DisplayWood.size(), 1);
+    Test.assert(compareWoodDisplay(scoreDisplay.DisplayWood[0].Display, ["5", "/"]));
+    Test.assertEqual(scoreDisplay.RunningTotal[0] as Number, 16);
+    return true;
+}
+
+(:test)
+function twoFrameStrikeSpareFillGetScoreCandlepin(logger as Logger) as Boolean {
+    var theGame = new Game(CANDLEPIN);
+    theGame.AddShot(STRIKE);
+    theGame.AddShot(5);
+    theGame.AddShot(5);
+    var theScore = new Score(theGame);
+    var scoreDisplay = theScore.GetScore();
+    Test.assertEqual(scoreDisplay.DisplayWood.size(), 2);
+    Test.assert(compareWoodDisplay(scoreDisplay.DisplayWood[0].Display, ["X"]));
+    Test.assert(compareWoodDisplay(scoreDisplay.DisplayWood[1].Display, ["5", "/"]));
     Test.assertEqual(scoreDisplay.RunningTotal[0] as Number, 20);
     return true;
 }
