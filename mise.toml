@@ -21,6 +21,10 @@ APP_NAME     = "garminbowling"
 DEVICE       = "fr970"
 JAVA_OPTIONS = "-Xms1g -Dfile.encoding=UTF-8"   # JVM heap + UTF-8 source encoding
 TEST_TIMEOUT = "180"                            # seconds; hard cap per test run (hang guard)
+# Optional AMBIENT overrides — deliberately NOT set here so the shell `:-` fallback works:
+#   CIQ_SDK_PATH  Connect IQ SDK root   (default: path in ~/.Garmin/ConnectIQ/current-sdk.cfg)
+#   CIQ_DEV_KEY   developer signing key (default: ~/.keys/garmin/developer_key)
+# e.g.  CIQ_SDK_PATH=/opt/ciq-sdk mise run build
 
 [tasks.build]
 description = "Compile the shippable garminbowling.prg (no display needed)"
@@ -30,9 +34,9 @@ outputs = ["bin/garminbowling.prg"]
 run = '''
 #!/usr/bin/env bash
 set -euo pipefail
-# current-sdk.cfg holds the SDK path (with a trailing slash); strip trailing slash(es).
-SDK="$(sed 's:/*$::' < "$HOME/.Garmin/ConnectIQ/current-sdk.cfg")"
-KEY="$HOME/.keys/garmin/developer_key"
+# SDK root: ambient $CIQ_SDK_PATH wins; else read the SDK manager's current-sdk.cfg.
+SDK="${CIQ_SDK_PATH:-$(cat "$HOME/.Garmin/ConnectIQ/current-sdk.cfg")}"; SDK="${SDK%/}"
+KEY="${CIQ_DEV_KEY:-$HOME/.keys/garmin/developer_key}"
 mkdir -p bin
 java $JAVA_OPTIONS -jar "$SDK/bin/monkeybrains.jar" \
   -o "bin/${APP_NAME}.prg" -f monkey.jungle -y "$KEY" -d "${DEVICE}_sim" -w
@@ -45,8 +49,8 @@ outputs = ["bin/garminbowling_test.prg"]
 run = '''
 #!/usr/bin/env bash
 set -euo pipefail
-SDK="$(sed 's:/*$::' < "$HOME/.Garmin/ConnectIQ/current-sdk.cfg")"
-KEY="$HOME/.keys/garmin/developer_key"
+SDK="${CIQ_SDK_PATH:-$(cat "$HOME/.Garmin/ConnectIQ/current-sdk.cfg")}"; SDK="${SDK%/}"
+KEY="${CIQ_DEV_KEY:-$HOME/.keys/garmin/developer_key}"
 mkdir -p bin
 java $JAVA_OPTIONS -jar "$SDK/bin/monkeybrains.jar" \
   -o "bin/${APP_NAME}_test.prg" -f monkey.jungle -y "$KEY" -d "${DEVICE}_sim" -w -t
@@ -63,7 +67,7 @@ depends = ["build"]
 run = '''
 #!/usr/bin/env bash
 set -euo pipefail
-SDK="$(sed 's:/*$::' < "$HOME/.Garmin/ConnectIQ/current-sdk.cfg")"
+SDK="${CIQ_SDK_PATH:-$(cat "$HOME/.Garmin/ConnectIQ/current-sdk.cfg")}"; SDK="${SDK%/}"
 # Launch the simulator detached (own session) so this task isn't blocked by it.
 setsid "$SDK/bin/simulator" >/tmp/ciq-run.log 2>&1 </dev/null &
 # Wait until the X display answers AND the sim has started logging, then push.

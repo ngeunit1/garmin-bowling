@@ -23,8 +23,9 @@ for t in java Xvfb xdpyinfo timeout setsid; do
   command -v "$t" >/dev/null 2>&1 || { echo "FATAL: required tool '$t' not in PATH" >&2; exit 10; }
 done
 
-# SDK path is recorded (with a trailing slash) in current-sdk.cfg; normalize it.
-SDK="$(sed 's:/*$::' < "$HOME/.Garmin/ConnectIQ/current-sdk.cfg")"
+# SDK root: ambient $CIQ_SDK_PATH wins (CI/containers/other homes); else read the
+# SDK manager's current-sdk.cfg. Trailing slash stripped so "$SDK/bin" stays clean.
+SDK="${CIQ_SDK_PATH:-$(cat "$HOME/.Garmin/ConnectIQ/current-sdk.cfg")}"; SDK="${SDK%/}"
 [ -x "$SDK/bin/monkeydo" ] || { echo "FATAL: SDK not found at $SDK" >&2; exit 10; }
 PRG="bin/${APP_NAME}_test.prg"
 [ -f "$PRG" ] || { echo "FATAL: $PRG not built (run 'mise run build-test')" >&2; exit 10; }
