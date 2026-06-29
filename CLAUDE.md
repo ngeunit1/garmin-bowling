@@ -11,7 +11,7 @@
 ## Pre-Commit Requirements
 
 Before every commit, run both:
-1. `task build` — must succeed (clean build, no errors)
-2. `task test` — must be green (all tests passing)
+1. `mise run build` — must succeed (clean build, no errors)
+2. `mise run test` — must be green (all tests passing)
 
 Do not commit if either fails.

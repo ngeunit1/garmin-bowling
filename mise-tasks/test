@@ -1,0 +1,111 @@
+#!/usr/bin/env bash
+#MISE description="Headless Connect IQ unit-test runner (setsid sim + readiness poll + timeout + PASSED parse)"
+#MISE depends=["build-test"]
+#
+# File-based mise task => REAL bash (not go-task's gosh), so trap/job-control work.
+# Exit codes (mise preserves these; go-task collapsed everything to 201):
+#   0   = all tests passed
+#   1   = tests failed/errored, or no summary line was produced
+#   10  = environment problem (missing tool / SDK / test binary)
+#   11  = could not get a working X display
+#   12  = simulator died during startup
+#   124 = tests hung (coreutils `timeout` fired)  [137 if it needed SIGKILL]
+#
+# Every command here is explained in detail in .reference/TASKS.md.
+set -euo pipefail
+
+APP_NAME="${APP_NAME:-garminbowling}"
+DEVICE="${DEVICE:-fr970}"
+TEST_TIMEOUT="${TEST_TIMEOUT:-180}"
+
+# --- preflight: fail clearly if a required tool is missing -------------------
+for t in java Xvfb xdpyinfo timeout setsid; do
+  command -v "$t" >/dev/null 2>&1 || { echo "FATAL: required tool '$t' not in PATH" >&2; exit 10; }
+done
+
+# SDK path is recorded (with a trailing slash) in current-sdk.cfg; normalize it.
+SDK="$(sed 's:/*$::' < "$HOME/.Garmin/ConnectIQ/current-sdk.cfg")"
+[ -x "$SDK/bin/monkeydo" ] || { echo "FATAL: SDK not found at $SDK" >&2; exit 10; }
+PRG="bin/${APP_NAME}_test.prg"
+[ -f "$PRG" ] || { echo "FATAL: $PRG not built (run 'mise run build-test')" >&2; exit 10; }
+
+SIM_LOG="$(mktemp)"; OUT="$(mktemp)"
+SIM_PGID=""; XVFB_PID=""; OWNS_XVFB=0
+
+# Always-run teardown: kill the simulator's whole process group (setsid gave it
+# its own), and our Xvfb if we started it. No broad pkill, no leaked webkit procs.
+cleanup() {
+  set +e
+  if [ -n "$SIM_PGID" ]; then
+    kill -TERM -- "-$SIM_PGID" 2>/dev/null
+    sleep 1
+    kill -KILL -- "-$SIM_PGID" 2>/dev/null
+  fi
+  { [ "$OWNS_XVFB" = 1 ] && [ -n "$XVFB_PID" ] && kill -TERM "$XVFB_PID" 2>/dev/null; } || true
+  rm -f "$SIM_LOG" "$OUT"
+}
+trap cleanup EXIT INT TERM
+
+# --- 1) virtual display -----------------------------------------------------
+# Prefer an existing DISPLAY; else reuse a persistent Xvfb :99 if it answers;
+# else start our own on a free display number (Xvfb -displayfd picks one).
+if [ -z "${DISPLAY:-}" ]; then
+  if DISPLAY=:99 xdpyinfo >/dev/null 2>&1; then
+    export DISPLAY=:99
+  else
+    DF="$(mktemp)"
+    Xvfb -displayfd 1 -screen 0 1024x768x24 -nolisten tcp >"$DF" 2>/dev/null &
+    XVFB_PID=$!; OWNS_XVFB=1
+    for _ in $(seq 1 100); do
+      n="$(cat "$DF" 2>/dev/null || true)"; [ -n "$n" ] && { export DISPLAY=":$n"; break; }
+      kill -0 "$XVFB_PID" 2>/dev/null || { echo "FATAL: Xvfb died on startup" >&2; rm -f "$DF"; exit 11; }
+      sleep 0.1
+    done
+    rm -f "$DF"
+  fi
+fi
+# Confirm the display actually responds (readiness poll, not a fixed sleep).
+for _ in $(seq 1 50); do xdpyinfo >/dev/null 2>&1 && break; sleep 0.2; done
+xdpyinfo >/dev/null 2>&1 || { echo "FATAL: DISPLAY ${DISPLAY:-<unset>} not ready" >&2; exit 11; }
+echo "Using DISPLAY=$DISPLAY"
+
+# --- 2) launch the simulator, fully detached, in its own process group -------
+# setsid + </dev/null + redirected stdout/stderr => no inherited fds, so no
+# parent (mise/bats/command-substitution) can hang waiting on the daemon.
+setsid "$SDK/bin/simulator" >"$SIM_LOG" 2>&1 </dev/null &
+SIM_PID=$!
+SIM_PGID="$(ps -o pgid= -p "$SIM_PID" | tr -d ' ')"
+# Readiness: sim still alive AND has written something to its log.
+for _ in $(seq 1 60); do
+  kill -0 "$SIM_PID" 2>/dev/null || { echo "FATAL: simulator exited during startup" >&2; cat "$SIM_LOG" >&2; exit 12; }
+  [ -s "$SIM_LOG" ] && break
+  sleep 0.5
+done
+
+# --- 3) run the suite under a hard timeout ----------------------------------
+# monkeydo ALWAYS exits 1 (even on success), so its exit code is ignored; the
+# authoritative result is the final 'PASSED (...)'/'FAILED (...)' summary line.
+# Retry a few times in case monkeydo connects before the sim is fully ready.
+attempt=0
+while : ; do
+  attempt=$((attempt + 1)); rc=0
+  timeout --kill-after=10s "${TEST_TIMEOUT}s" \
+    "$SDK/bin/monkeydo" "$PRG" "$DEVICE" -t >"$OUT" 2>&1 || rc=$?
+  if [ "$rc" = 124 ] || [ "$rc" = 137 ]; then
+    echo "FATAL: tests hung — exceeded ${TEST_TIMEOUT}s" >&2; cat "$OUT"; exit 124
+  fi
+  grep -Eq '^(PASSED|FAILED) \(' "$OUT" && break
+  if [ "$attempt" -ge 3 ]; then
+    echo "FATAL: no test summary after $attempt attempts" >&2; cat "$OUT"; exit 1
+  fi
+  sleep 1
+done
+cat "$OUT"
+
+# --- 4) authoritative pass/fail ---------------------------------------------
+summary="$(grep -E '^(PASSED|FAILED) \(' "$OUT" | tail -n1 || true)"
+echo "---- Result: ${summary:-<none>}"
+if [[ "$summary" == PASSED\ * && "$summary" == *failed=0* && "$summary" == *errors=0* ]]; then
+  exit 0
+fi
+exit 1
