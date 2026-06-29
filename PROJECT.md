@@ -217,17 +217,21 @@ mise run build
 
 GitHub Actions runs on every push and pull request to `main`.
 
-Build and test run in one job on a standard `ubuntu-latest` runner via the public
-[`matco/action-connectiq-tester`](https://github.com/matco/action-connectiq-tester)
-action, which bundles the Connect IQ SDK, the `fr970` device, and a headless Xvfb
-display. It compiles `monkey.jungle` with `-d fr970 -t`, runs the unit tests on the
-simulator, and fails the job if any test fails. No credentials are required — a
-temporary signing certificate is generated automatically.
+Build and test run in one job on a standard `ubuntu-latest` runner. The job checks
+out the code, then `docker run`s the public matco Connect IQ tester image
+([`ghcr.io/matco/connectiq-tester`](https://github.com/matco/connectiq-tester),
+pinned by digest), which bundles the Connect IQ SDK, the `fr970` device, and a
+headless Xvfb display. It compiles `monkey.jungle` for `fr970` with `-t`, runs the
+unit tests on the simulator, and fails the job if any test fails. No credentials
+are required — a temporary signing certificate is generated in-container. The full
+test output is printed to the step log and uploaded as the `ciq-test-output`
+artifact.
 
-The action tracks the matco image's SDK version (currently 9.x); pin by image
-digest if an exact SDK is ever required. Locally, the same build and tests run via
-`mise run build` / `mise run test` (see [docs/REMOTE-DEV.md](docs/REMOTE-DEV.md)
-for the headless display setup).
+The image is invoked directly via `docker run` rather than matco's GitHub Action,
+whose argument order has drifted out of sync with the current image. To move to a
+newer SDK, repull the image and update the pinned digest. Locally, the same build
+and tests run via `mise run build` / `mise run test` (see
+[docs/REMOTE-DEV.md](docs/REMOTE-DEV.md)).
 
 ---
 

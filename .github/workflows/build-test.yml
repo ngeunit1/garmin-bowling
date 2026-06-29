@@ -13,14 +13,35 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
       - name: Build & run unit tests on fr970
-        # Public image; bundles the Connect IQ SDK + fr970 device + a headless
-        # Xvfb display, and generates a temporary signing cert when none is
-        # supplied. No secrets, no private image. The action's tester.sh exits
-        # non-zero on test failure, so this step is a real gate.
-        # Note: its SDK tracks ghcr.io/matco/connectiq-tester:latest (currently
-        # 9.x); pin by image digest if an exact SDK version is ever required.
-        uses: matco/action-connectiq-tester@v1
+        shell: bash
+        run: |
+          set -o pipefail
+          # We invoke matco's public Connect IQ tester IMAGE directly rather than
+          # its GitHub Action. The action (@v1) has drifted out of sync with the
+          # image: it passes args as [path, device, cert], but the image's
+          # entrypoint (bash /connectiq/bin/tester.sh) now reads them as
+          # [device, cert] — so the action compiled for device "." and failed
+          # before any test ran, surfacing no output.
+          #
+          # tester.sh <device> <certificate>: empty cert => it generates a temp
+          # one; it then compiles monkey.jungle for the device with -t, launches
+          # the simulator under Xvfb, runs monkeydo, and parses the PASSED/FAILED
+          # summary (monkeydo's exit code is always 1). It exits non-zero on any
+          # test failure, so this step is a real gate.
+          #
+          # Pinned by digest for reproducibility (the args above match THIS image).
+          # To move to a newer SDK: docker pull ghcr.io/matco/connectiq-tester:latest
+          # then replace the digest below.
+          docker run --rm \
+            -v "$GITHUB_WORKSPACE":/workspace -w /workspace \
+            ghcr.io/matco/connectiq-tester@sha256:7a6f586cb0e0393ff288da09cf27b6dad40a0058a346c529b99fd0fc19858f0f \
+            fr970 "" 2>&1 | tee ciq-test-output.txt
+
+      - name: Upload test output
+        if: always()
+        uses: actions/upload-artifact@v4
         with:
-          path: .
-          device: fr970
+          name: ciq-test-output
+          path: ciq-test-output.txt
