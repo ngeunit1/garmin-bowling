@@ -194,21 +194,21 @@ Tests live in `test/` and run in the Garmin ConnectIQ simulator.
 | `TestGame.mc` | Game orchestration — frame transitions, bonus tracking, GetFrameStats output |
 | `TestScore.mc` | Score display — shot notation (X, /, -), running totals, null handling for pending frames |
 
-Tests are tagged with `(:test)` and executed via `monkeydo` with the `-t` flag. The `runtests.sh` wrapper exits 0 if the simulator output contains `"PASSED"`.
+Tests are tagged with `(:test)` and executed via `monkeydo -t` against the simulator. `mise run test` builds the test binary, runs it on a headless Xvfb display, and determines pass/fail by parsing the final `PASSED (passed=N, failed=0, errors=0)` summary line (monkeydo's own exit code is always 1, so it is ignored).
 
 **Run tests:**
 ```
-task test
+mise run test
 ```
 
 **Run app in simulator:**
 ```
-task run
+mise run run
 ```
 
 **Build only:**
 ```
-task build
+mise run build
 ```
 
 ---
@@ -217,12 +217,17 @@ task build
 
 GitHub Actions runs on every push and pull request to `main`.
 
-| Job | Docker Image | Command |
-|---|---|---|
-| build | `ngeunit1/garmin-docker:v0.0.4` | `task build` |
-| test | `ngeunit1/garmin-docker:v0.0.5` | `task test` |
+Build and test run in one job on a standard `ubuntu-latest` runner via the public
+[`matco/action-connectiq-tester`](https://github.com/matco/action-connectiq-tester)
+action, which bundles the Connect IQ SDK, the `fr970` device, and a headless Xvfb
+display. It compiles `monkey.jungle` with `-d fr970 -t`, runs the unit tests on the
+simulator, and fails the job if any test fails. No credentials are required — a
+temporary signing certificate is generated automatically.
 
-The test job starts a virtual display (Xvfb) and the ConnectIQ simulator inside the container to execute the unit tests headlessly.
+The action tracks the matco image's SDK version (currently 9.x); pin by image
+digest if an exact SDK is ever required. Locally, the same build and tests run via
+`mise run build` / `mise run test` (see [docs/REMOTE-DEV.md](docs/REMOTE-DEV.md)
+for the headless display setup).
 
 ---
 

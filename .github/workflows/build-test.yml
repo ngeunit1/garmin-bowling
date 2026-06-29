@@ -7,35 +7,20 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    container:
-      image: ngeunit1/garmin-docker:v0.0.4
-      options: --user root
-      credentials:
-        username: ngeunit1
-        password: ${{ secrets.DOCKER_CONTAINER_REGISTRY_TOKEN }}
-    env:
-      HOME: /root
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-    - name: Run build
-      run: task build
   test:
     runs-on: ubuntu-latest
-    container:
-      image: ngeunit1/garmin-docker:v0.0.5
-      options: --user root
-      credentials:
-        username: ngeunit1
-        password: ${{ secrets.DOCKER_CONTAINER_REGISTRY_TOKEN }}
-    env:
-      HOME: /root
+    timeout-minutes: 10
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-    - name: Run test
-      run: task test
-  
-    
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Build & run unit tests on fr970
+        # Public image; bundles the Connect IQ SDK + fr970 device + a headless
+        # Xvfb display, and generates a temporary signing cert when none is
+        # supplied. No secrets, no private image. The action's tester.sh exits
+        # non-zero on test failure, so this step is a real gate.
+        # Note: its SDK tracks ghcr.io/matco/connectiq-tester:latest (currently
+        # 9.x); pin by image digest if an exact SDK version is ever required.
+        uses: matco/action-connectiq-tester@v1
+        with:
+          path: .
+          device: fr970
