@@ -1,0 +1,7 @@
+<layout id="StartGame" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://developer.garmin.com/downloads/connect-iq/resources.xsd">
+    <text-area id="startGame" text="Press Start to Start Game" x="center" y="center" justification="Graphics.TEXT_JUSTIFY_CENTER|Graphics.TEXT_JUSTIFY_VCENTER" width="75%" height="75%">
+        <fonts>
+            <font>Gfx.FONT_MEDIUM</font>
+        </fonts>
+    </text-area> 
+</layout>

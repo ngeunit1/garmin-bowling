@@ -1,18 +1,6 @@
 import Toybox.Lang;
 import Toybox.Test;
 
-function compareDisplayWoodShots(act as Array<Number>, exp as Array<Number>) as Boolean {
-    if (act.size() != exp.size()) {
-        return false;
-    }
-    for (var idx = 0; idx < exp.size(); idx++) {
-        if (!(act[idx].equals(exp[idx]))) {
-            return false;
-        }
-    }
-    return true;
-}
-
 (:test)
 function createGame(logger as Logger) as Boolean {
     var theGame = new Game(TENPIN);
@@ -24,7 +12,6 @@ function createGame(logger as Logger) as Boolean {
 (:test)
 function gameAddShotLessThan10(logger as Logger) as Boolean {
     var theGame = new Game(TENPIN);
-    theGame.StartGame();
     var frameStatus = theGame.AddShot(5);
     Test.assertEqual(theGame.FrameNumber, 0);
     Test.assertEqual(frameStatus, FRAMENOTDONE);
@@ -35,7 +22,6 @@ function gameAddShotLessThan10(logger as Logger) as Boolean {
 (:test)
 function gameAddTwoShotsLessThan10(logger as Logger) as Boolean {
     var theGame = new Game(TENPIN);
-    theGame.StartGame();
     theGame.AddShot(5);
     var frameStatus = theGame.AddShot(4);
     Test.assertEqual(theGame.FrameNumber, 1);
@@ -47,8 +33,41 @@ function gameAddTwoShotsLessThan10(logger as Logger) as Boolean {
 (:test)
 function gameAddStrike(logger as Logger) as Boolean {
     var theGame = new Game(TENPIN);
-    theGame.StartGame();
-    var frameStatus = theGame.AddShot(10);
+    var frameStatus = theGame.AddShot(STRIKE);
+    Test.assertEqual(theGame.FrameNumber, 1);
+    Test.assertEqual(frameStatus, NEXTFRAME);
+    Test.assertEqual(theGame.GameDone, false);
+    return true;
+}
+
+(:test)
+function gameAddSpare(logger as Logger) as Boolean {
+    var theGame = new Game(TENPIN);
+    theGame.AddShot(5);
+    var frameStatus = theGame.AddShot(5);
+    Test.assertEqual(theGame.FrameNumber, 1);
+    Test.assertEqual(frameStatus, NEXTFRAME);
+    Test.assertEqual(theGame.GameDone, false);
+    return true;
+}
+
+(:test)
+function gameAddSpareCandlepin(logger as Logger) as Boolean {
+    var theGame = new Game(CANDLEPIN);
+    theGame.AddShot(5);
+    var frameStatus = theGame.AddShot(5);
+    Test.assertEqual(theGame.FrameNumber, 1);
+    Test.assertEqual(frameStatus, NEXTFRAME);
+    Test.assertEqual(theGame.GameDone, false);
+    return true;
+}
+
+(:test)
+function gameAddTenboxCandlepin(logger as Logger) as Boolean {
+    var theGame = new Game(CANDLEPIN);
+    theGame.AddShot(5);
+    theGame.AddShot(4);
+    var frameStatus = theGame.AddShot(1);
     Test.assertEqual(theGame.FrameNumber, 1);
     Test.assertEqual(frameStatus, NEXTFRAME);
     Test.assertEqual(theGame.GameDone, false);
@@ -58,7 +77,6 @@ function gameAddStrike(logger as Logger) as Boolean {
 (:test)
 function gameAddThreeShotsLessThan10(logger as Logger) as Boolean {
     var theGame = new Game(CANDLEPIN);
-    theGame.StartGame();
     theGame.AddShot(2);
     theGame.AddShot(2);
     var frameStatus = theGame.AddShot(4);
@@ -71,11 +89,8 @@ function gameAddThreeShotsLessThan10(logger as Logger) as Boolean {
 (:test)
 function gameTenthFrameStrikeFrameNotDone(logger as Logger) as Boolean {
     var theGame = new Game(TENPIN);
-    theGame.StartGame();
-    for (var idx = 0; idx < 9; idx++) {
-        theGame.AddShot(10);
-    }
-    var frameStatus = theGame.AddShot(10);
+    advanceToTenthFrame(theGame);
+    var frameStatus = theGame.AddShot(STRIKE);
     Test.assertEqual(theGame.FrameNumber, 9);
     Test.assertEqual(frameStatus, FRAMENOTDONE);
     Test.assertEqual(theGame.GameDone, false);
@@ -85,11 +100,8 @@ function gameTenthFrameStrikeFrameNotDone(logger as Logger) as Boolean {
 (:test)
 function gameTenthFrameThreeShotsGameDone(logger as Logger) as Boolean {
     var theGame = new Game(TENPIN);
-    theGame.StartGame();
-    for (var idx = 0; idx < 9; idx++) {
-        theGame.AddShot(10);
-    }
-    theGame.AddShot(10);
+    advanceToTenthFrame(theGame);
+    theGame.AddShot(STRIKE);
     theGame.AddShot(5);
     var frameStatus = theGame.AddShot(4);
     Test.assertEqual(theGame.FrameNumber, 9);
@@ -101,10 +113,7 @@ function gameTenthFrameThreeShotsGameDone(logger as Logger) as Boolean {
 (:test)
 function gameTenthFrameTwoShotsLessThan10GameDone(logger as Logger) as Boolean {
     var theGame = new Game(TENPIN);
-    theGame.StartGame();
-    for (var idx = 0; idx < 9; idx++) {
-        theGame.AddShot(10);
-    }
+    advanceToTenthFrame(theGame);
     theGame.AddShot(4);
     var frameStatus = theGame.AddShot(4);
     Test.assertEqual(theGame.FrameNumber, 9);
@@ -114,9 +123,71 @@ function gameTenthFrameTwoShotsLessThan10GameDone(logger as Logger) as Boolean {
 }
 
 (:test)
+function gameTenthFrameSpareNotDone(logger as Logger) as Boolean {
+    var theGame = new Game(TENPIN);
+    advanceToTenthFrame(theGame);
+    theGame.AddShot(4);
+    var frameStatus = theGame.AddShot(6);
+    Test.assertEqual(theGame.FrameNumber, 9);
+    Test.assertEqual(frameStatus, FRAMENOTDONE);
+    Test.assertEqual(theGame.GameDone, false);
+    return true;
+}
+
+(:test)
+function gameTenthFrameSpareWithFillGameDone(logger as Logger) as Boolean {
+    var theGame = new Game(TENPIN);
+    advanceToTenthFrame(theGame);
+    theGame.AddShot(4);
+    theGame.AddShot(6);
+    var frameStatus = theGame.AddShot(4);
+    Test.assertEqual(theGame.FrameNumber, 9);
+    Test.assertEqual(frameStatus, ENDGAME);
+    Test.assertEqual(theGame.GameDone, true);
+    return true;
+}
+
+(:test)
+function gameTenthFrameSpareNotDoneCandlepin(logger as Logger) as Boolean {
+    var theGame = new Game(CANDLEPIN);
+    advanceToTenthFrame(theGame);
+    theGame.AddShot(4);
+    var frameStatus = theGame.AddShot(6);
+    Test.assertEqual(theGame.FrameNumber, 9);
+    Test.assertEqual(frameStatus, FRAMENOTDONE);
+    Test.assertEqual(theGame.GameDone, false);
+    return true;
+}
+
+(:test)
+function gameTenthFrameSpareWithFillDoneCandlepin(logger as Logger) as Boolean {
+    var theGame = new Game(CANDLEPIN);
+    advanceToTenthFrame(theGame);
+    theGame.AddShot(4);
+    theGame.AddShot(6);
+    var frameStatus = theGame.AddShot(6);
+    Test.assertEqual(theGame.FrameNumber, 9);
+    Test.assertEqual(frameStatus, ENDGAME);
+    Test.assertEqual(theGame.GameDone, true);
+    return true;
+}
+
+(:test)
+function gameTenthFrameSpareThreeShotDoneCandlepin(logger as Logger) as Boolean {
+    var theGame = new Game(CANDLEPIN);
+    advanceToTenthFrame(theGame);
+    theGame.AddShot(4);
+    theGame.AddShot(2);
+    var frameStatus = theGame.AddShot(2);
+    Test.assertEqual(theGame.FrameNumber, 9);
+    Test.assertEqual(frameStatus, ENDGAME);
+    Test.assertEqual(theGame.GameDone, true);
+    return true;
+}
+
+(:test)
 function initialGetFrameStats(logger as Logger) as Boolean {
     var theGame = new Game(TENPIN);
-    theGame.StartGame();
     var frameStats = theGame.GetFrameStats();
     Test.assertEqual(frameStats.Frames.size(), 0);
     return true;
@@ -125,46 +196,42 @@ function initialGetFrameStats(logger as Logger) as Boolean {
 (:test)
 function oneFrameGetFrameStats(logger as Logger) as Boolean {
     var theGame = new Game(TENPIN);
-    theGame.StartGame();
     theGame.AddShot(5);
     theGame.AddShot(4);
     var frameStats = theGame.GetFrameStats();
     Test.assertEqual(frameStats.Frames.size(), 1);
     Test.assertEqual(frameStats.Frames[0].TotalWood as Number, 9);
-    Test.assert(compareDisplayWoodShots(frameStats.Frames[0].WoodShots, [5, 4]));
+    Test.assert(compareWoodShots(frameStats.Frames[0].WoodShots as Array<Number?>, [5, 4]));
     return true;
 }
 
 (:test)
 function oneFrameSpareGetFrameStats(logger as Logger) as Boolean {
     var theGame = new Game(TENPIN);
-    theGame.StartGame();
     theGame.AddShot(5);
     theGame.AddShot(5);
     var frameStats = theGame.GetFrameStats();
     Test.assertEqual(frameStats.Frames.size(), 1);
     Test.assert(frameStats.Frames[0].TotalWood == null);
-    Test.assert(compareDisplayWoodShots(frameStats.Frames[0].WoodShots, [5,5]));
+    Test.assert(compareWoodShots(frameStats.Frames[0].WoodShots as Array<Number?>, [5, 5]));
     return true;
 }
 
 (:test)
 function oneFrameStrikeGetFrameStats(logger as Logger) as Boolean {
     var theGame = new Game(TENPIN);
-    theGame.StartGame();
-    theGame.AddShot(10);
+    theGame.AddShot(STRIKE);
     var frameStats = theGame.GetFrameStats();
     Test.assertEqual(frameStats.Frames.size(), 1);
     Test.assert(frameStats.Frames[0].TotalWood == null);
-    Test.assert(compareDisplayWoodShots(frameStats.Frames[0].WoodShots, [10]));
+    Test.assert(compareWoodShots(frameStats.Frames[0].WoodShots as Array<Number?>, [STRIKE]));
     return true;
 }
 
 (:test)
-function oneFrameStrikeWithIncompteFillGetFrameStats(logger as Logger) as Boolean {
+function oneFrameStrikeWithIncompleteFillGetFrameStats(logger as Logger) as Boolean {
     var theGame = new Game(TENPIN);
-    theGame.StartGame();
-    theGame.AddShot(10);
+    theGame.AddShot(STRIKE);
     theGame.AddShot(5);
     var frameStats = theGame.GetFrameStats();
     Test.assertEqual(frameStats.Frames.size(), 1);
@@ -175,23 +242,22 @@ function oneFrameStrikeWithIncompteFillGetFrameStats(logger as Logger) as Boolea
 (:test)
 function oneFrameStrikeWithFillsGetFrameStats(logger as Logger) as Boolean {
     var theGame = new Game(TENPIN);
-    theGame.StartGame();
-    theGame.AddShot(10);
+    theGame.AddShot(STRIKE);
     theGame.AddShot(5);
     theGame.AddShot(5);
     var frameStats = theGame.GetFrameStats();
     Test.assertEqual(frameStats.Frames.size(), 2);
     Test.assertEqual(frameStats.Frames[0].TotalWood as Number, 20);
+    Test.assert(compareWoodShots(frameStats.Frames[0].WoodShots as Array<Number?>, [10]));
     return true;
 }
 
 (:test)
 function oneFrameStrikeWithStrikeFillsGetFrameStats(logger as Logger) as Boolean {
     var theGame = new Game(TENPIN);
-    theGame.StartGame();
-    theGame.AddShot(10);
-    theGame.AddShot(10);
-    theGame.AddShot(10);
+    theGame.AddShot(STRIKE);
+    theGame.AddShot(STRIKE);
+    theGame.AddShot(STRIKE);
     var frameStats = theGame.GetFrameStats();
     Test.assertEqual(frameStats.Frames.size(), 3);
     Test.assertEqual(frameStats.Frames[0].TotalWood as Number, 30);
@@ -199,32 +265,81 @@ function oneFrameStrikeWithStrikeFillsGetFrameStats(logger as Logger) as Boolean
 }
 
 (:test)
-function oneFrameThreeShotGetFrameStats(logger as Logger) as Boolean {
+function oneFrameSpareWithFillsGetFrameStats(logger as Logger) as Boolean {
+    var theGame = new Game(TENPIN);
+    theGame.AddShot(6);
+    theGame.AddShot(4);
+    theGame.AddShot(5);
+    theGame.AddShot(5);
+    var frameStats = theGame.GetFrameStats();
+    Test.assertEqual(frameStats.Frames.size(), 2);
+    Test.assertEqual(frameStats.Frames[0].TotalWood as Number, 15);
+    return true;
+}
+
+(:test)
+function oneFrameCandlepinGetFrameStats(logger as Logger) as Boolean {
     var theGame = new Game(CANDLEPIN);
-    theGame.StartGame();
+    theGame.AddShot(5);
+    theGame.AddShot(3);
+    theGame.AddShot(1);
+    var frameStats = theGame.GetFrameStats();
+    Test.assertEqual(frameStats.Frames.size(), 1);
+    Test.assertEqual(frameStats.Frames[0].TotalWood as Number, 9);
+    Test.assert(compareWoodShots(frameStats.Frames[0].WoodShots as Array<Number?>, [5, 3, 1]));
+    return true;
+}
+
+(:test)
+function oneFrameCandlepinTenboxGetFrameStats(logger as Logger) as Boolean {
+    var theGame = new Game(CANDLEPIN);
     theGame.AddShot(5);
     theGame.AddShot(3);
     theGame.AddShot(2);
     var frameStats = theGame.GetFrameStats();
     Test.assertEqual(frameStats.Frames.size(), 1);
     Test.assertEqual(frameStats.Frames[0].TotalWood as Number, 10);
-    Test.assert(compareDisplayWoodShots(frameStats.Frames[0].WoodShots, [5, 3, 2]));
+    Test.assert(compareWoodShots(frameStats.Frames[0].WoodShots as Array<Number?>, [5, 3, 2]));
+    return true;
+}
+
+(:test)
+function oneFrameCandlepinSpareWithIncompleteFillsGetFrameStats(logger as Logger) as Boolean {
+    var theGame = new Game(CANDLEPIN);
+    theGame.AddShot(6);
+    theGame.AddShot(4);
+    var frameStats = theGame.GetFrameStats();
+    Test.assertEqual(frameStats.Frames.size(), 1);
+    Test.assert(frameStats.Frames[0].TotalWood == null);
+    Test.assert(compareWoodShots(frameStats.Frames[0].WoodShots as Array<Number?>, [6, 4]));
+    return true;
+}
+
+(:test)
+function oneFrameCandlepinSpareWithCompleteFillsGetFrameStats(logger as Logger) as Boolean {
+    var theGame = new Game(CANDLEPIN);
+    theGame.AddShot(6);
+    theGame.AddShot(4);
+    theGame.AddShot(3);
+    var frameStats = theGame.GetFrameStats();
+    Test.assertEqual(frameStats.Frames.size(), 1);
+    Test.assertEqual(frameStats.Frames[0].TotalWood as Number, 13);
+    Test.assert(compareWoodShots(frameStats.Frames[0].WoodShots as Array<Number?>, [6, 4]));
     return true;
 }
 
 (:test)
 function twoDifferentFramesGetFrameStats(logger as Logger) as Boolean {
     var theGame = new Game(TENPIN);
-    theGame.StartGame();
     theGame.AddShot(5);
     theGame.AddShot(4);
     theGame.AddShot(3);
     theGame.AddShot(2);
     var frameStats = theGame.GetFrameStats();
     Test.assertEqual(frameStats.Frames.size(), 2);
-    Test.assert(frameStats.Frames[0].TotalWood == 9);
-    Test.assert(compareDisplayWoodShots(frameStats.Frames[0].WoodShots, [5, 4]));
-    Test.assert(frameStats.Frames[1].TotalWood == 5);
-    Test.assert(compareDisplayWoodShots(frameStats.Frames[1].WoodShots, [3, 2]));
+    Test.assertEqual(frameStats.Frames[0].TotalWood as Number, 9);
+    Test.assert(compareWoodShots(frameStats.Frames[0].WoodShots as Array<Number?>, [5, 4]));
+    Test.assertEqual(frameStats.Frames[1].TotalWood as Number, 5);
+    Test.assert(compareWoodShots(frameStats.Frames[1].WoodShots as Array<Number?>, [3, 2]));
     return true;
 }

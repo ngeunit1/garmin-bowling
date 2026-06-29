@@ -76,7 +76,7 @@ class NormalFrame {
         if (!Bowled) {
             throw new InvalidFrameException("Called GetWood from non-bowled frame");
         }
-        return _wood;
+        return _wood.slice(0, _currentShot + 1) as Array<Number?>;
     }
 
     var Bowled as Boolean;
@@ -135,7 +135,7 @@ class TenthFrame {
         if (!Bowled) {
             throw new InvalidFrameException("Called GetWood from non-bowled frame");
         }
-        return _wood;
+        return _wood.slice(0, _currentShot + 1) as Array<Number?>;
     }
 
     var Bowled as Boolean;

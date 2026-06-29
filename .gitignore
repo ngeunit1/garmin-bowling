@@ -1,1 +1,4 @@
+.mise/
 bin/
+mise.local.toml
+.reference/
